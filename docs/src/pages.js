@@ -118,6 +118,7 @@ const pages = [
           { pathname: '/components/about-the-lab' },
           { pathname: '/components/alert' },
           { pathname: '/components/autocomplete' },
+          { pathname: '/components/carousel' },
           { pathname: '/components/pagination' },
           { pathname: '/components/rating' },
           { pathname: '/components/skeleton' },
