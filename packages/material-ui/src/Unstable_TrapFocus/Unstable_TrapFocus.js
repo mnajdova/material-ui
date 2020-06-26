@@ -6,6 +6,19 @@ import ownerDocument from '../utils/ownerDocument';
 import useForkRef from '../utils/useForkRef';
 import { exactProp } from '@material-ui/utils';
 
+
+const getReactFiber = (domelement) => {
+  if (!domelement) return null;
+
+  for (const prop in domelement) {
+    if (prop.startsWith('__reactInternalInstance$')) {
+      return domelement[prop];
+    }
+  }
+
+  return null;
+};
+
 /**
  * Utility component that locks focus inside the component.
  */
@@ -85,6 +98,15 @@ function Unstable_TrapFocus(props) {
       }
 
       if (rootRef.current && !rootRef.current.contains(doc.activeElement)) {
+        const activeElementFiber = getReactFiber(doc.activeElement);
+        const rootElementFiber = getReactFiber(rootRef.current);
+        let fiber = activeElementFiber;
+        while(!!fiber) {
+          if(fiber.return && fiber.return.stateNode === rootElementFiber.stateNode) {
+            return;
+          }
+          fiber = fiber.return;
+        }
         rootRef.current.focus();
       }
     };
