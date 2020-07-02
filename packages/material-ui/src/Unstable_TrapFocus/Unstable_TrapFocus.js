@@ -23,7 +23,7 @@ function Unstable_TrapFocus(props) {
   const sentinelStart = React.useRef(null);
   const sentinelEnd = React.useRef(null);
   const nodeToRestore = React.useRef();
-  const reactFocusEventTarget = React.useRef(null);
+  const reactFocusEventTargetRef = React.useRef(null);
 
   const rootRef = React.useRef(null);
   // can be removed once we drop support for non ref forwarding class components
@@ -75,6 +75,11 @@ function Unstable_TrapFocus(props) {
     }
 
     const contain = (nativeEvent) => {
+      const { current: reactFocusEventTarget } = reactFocusEventTargetRef;
+      if (nativeEvent) {
+        reactFocusEventTargetRef.current = null;
+      }
+
       if (
         !doc.hasFocus() ||
         disableEnforceFocus ||
@@ -86,13 +91,17 @@ function Unstable_TrapFocus(props) {
       }
 
       if (rootRef.current && !rootRef.current.contains(doc.activeElement)) {
-        // if the focus event is not coming from inside the children's react tree, reset the refs
+        // if the focus event is coming from inside the children's react tree, skip focus containment
         if (
-          (nativeEvent && reactFocusEventTarget.current !== nativeEvent.target) ||
-          doc.activeElement !== reactFocusEventTarget.current
+          reactFocusEventTarget !== null &&
+          nativeEvent &&
+          // This is usually always true in a native event
+          // because a registered native capture listener is executed after reacts focus listener.
+          // Except when there was autoFocus.
+          // Then we missed the native focus event because we registered the handler too late (useEffect).
+          // If we handle a native event outside this react tree then `reactFocusEventTarget` will point to an earlier event target.
+          reactFocusEventTarget === nativeEvent.target
         ) {
-          reactFocusEventTarget.current = null;
-        } else if (reactFocusEventTarget.current !== null) {
           return;
         }
 
@@ -153,7 +162,7 @@ function Unstable_TrapFocus(props) {
   }, [disableAutoFocus, disableEnforceFocus, disableRestoreFocus, isEnabled, open]);
 
   const onFocus = (event) => {
-    reactFocusEventTarget.current = event.target;
+    reactFocusEventTargetRef.current = event.target;
 
     const childrenPropsHandler = children.props.onFocus;
     if (childrenPropsHandler) {
