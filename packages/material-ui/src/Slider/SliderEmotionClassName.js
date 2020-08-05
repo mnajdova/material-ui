@@ -96,20 +96,20 @@ export const classes = {
   }),
   /* Styles applied to the track element if `track={false}`. */
   trackFalse: {
-    ' .Mui-Slider--track': {
+    ' .MuiSlider--track': {
       display: 'none',
     },
   },
   /* Styles applied to the track element if `track="inverted"`. */
   trackInverted: (theme) => ({
-    ' .Mui-Slider--track': {
+    ' .MuiSlider--track': {
       backgroundColor:
         // Same logic as the LinearProgress track color
         theme.palette.type === 'light'
           ? lighten(theme.palette.primary.main, 0.62)
           : darken(theme.palette.primary.main, 0.5),
     },
-    ' .Mui-Slider--rail': {
+    ' .MuiSlider--rail': {
       opacity: 1,
     },
   }),
@@ -152,7 +152,7 @@ export const classes = {
         boxShadow: 'none',
       },
     }),
-    '&.Mui-Slider--active': {
+    '&.MuiSlider--active': {
       boxShadow: `0px 0px 0px 14px ${fade(theme.palette.primary.main, 0.16)}`,
     },
     ...(props.disabled && {
@@ -185,7 +185,7 @@ export const classes = {
     ...(props.focusVisible && {
       boxShadow: `0px 0px 0px 8px ${fade(theme.palette.secondary.main, 0.16)}`,
     }),
-    '&.Mui-Slider--active': {
+    '&.MuiSlider--active': {
       boxShadow: `0px 0px 0px 14px ${fade(theme.palette.secondary.main, 0.16)}`,
     },
   }),
@@ -276,8 +276,8 @@ const Slider = React.forwardRef(function Slider(props, ref) {
           },
           className,
         ),
-        rail: cx(css(callable(classes.rail)(theme, props)), 'Mui-Slider--rail'),
-        track: cx(css(callable(classes.track)(theme, props)), 'Mui-Slider--rail'),
+        rail: cx(css(callable(classes.rail)(theme, props)), 'MuiSlider--rail'),
+        track: cx(css(callable(classes.track)(theme, props)), 'MuiSlider--rail'),
         mark: css(callable(classes.mark)(theme, props)),
         markActive: css(callable(classes.markActive)(theme, props)),
         markLabel: css(callable(classes.markLabel)(theme, props)),
@@ -286,8 +286,8 @@ const Slider = React.forwardRef(function Slider(props, ref) {
         thumb: cx(css(callable(classes.thumb)(theme, props)), css(callable(classes[`thumbColor${capitalize(color)}`])(theme, props)), {
           [css(callable(classes.disabled)(theme, props))]: disabled,
         }),
-        thumbActive: 'Mui-Slider--active',
-        thumbFocusVisible: cx(css(callable(classes.focusVisible)(theme, props)), 'Mui-Slider--focusVisible')
+        thumbActive: 'MuiSlider--active',
+        thumbFocusVisible: cx(css(callable(classes.focusVisible)(theme, props)), 'MuiSlider--focusVisible')
       }
 
       return (
