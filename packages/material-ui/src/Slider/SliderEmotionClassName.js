@@ -1,15 +1,22 @@
 import * as React from 'react';
-import clsx from 'clsx';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+import { ClassNames } from '@emotion/core';
 import useTheme from '../styles/useTheme';
-import withStyles from '../styles/withStyles';
+import { ThemeProvider } from 'emotion-theming';
 import { fade, lighten, darken } from '../styles/colorManipulator';
 import capitalize from '../utils/capitalize';
 import SliderBase from './Slider.base';
 import sliderProptypes from './propTypes';
 
-export const styles = (theme) => ({
+const callable = (input) => (...arg) => {
+  if(typeof input === 'function') return input(...arg);
+  return input;
+}
+
+export const classes = {
   /* Styles applied to the root element. */
-  root: {
+  root: (theme, props) => ({
     height: 2,
     width: '100%',
     boxSizing: 'content-box',
@@ -20,50 +27,50 @@ export const styles = (theme) => ({
     touchAction: 'none',
     color: theme.palette.primary.main,
     WebkitTapHighlightColor: 'transparent',
-    '&$disabled': {
+    ...(props.disabled && {
       pointerEvents: 'none',
       cursor: 'default',
       color: theme.palette.grey[400],
-    },
-    '&$vertical': {
+    }),
+    ...(props.orientation === 'vertical' && {
       width: 2,
       height: '100%',
       padding: '0 13px',
-    },
+    }),
     // The primary input mechanism of the device includes a pointing device of limited accuracy.
     '@media (pointer: coarse)': {
       // Reach 42px touch target, about ~8mm on screen.
       padding: '20px 0',
-      '&$vertical': {
+      ...(props.orientation === 'vertical' && {
         padding: '0 20px',
-      },
+      })
     },
     '@media print': {
       colorAdjust: 'exact',
     },
-  },
+  }),
   /* Styles applied to the root element if `color="primary"`. */
   colorPrimary: {
     // TODO v5: move the style here
   },
   /* Styles applied to the root element if `color="secondary"`. */
-  colorSecondary: {
+  colorSecondary: (theme) => ({
     color: theme.palette.secondary.main,
-  },
+  }),
   /* Styles applied to the root element if `marks` is provided with at least one label. */
-  marked: {
+  marked: (theme, props) => ({
     marginBottom: 20,
-    '&$vertical': {
+    ...(props.orientation === 'vertical' && {
       marginBottom: 'auto',
       marginRight: 20,
-    },
-  },
+    }),
+  }),
   /* Pseudo-class applied to the root element if `orientation="vertical"`. */
   vertical: {},
   /* Pseudo-class applied to the root and thumb element if `disabled={true}`. */
   disabled: {},
   /* Styles applied to the rail element. */
-  rail: {
+  rail: (theme, props) => ({
     display: 'block',
     position: 'absolute',
     width: '100%',
@@ -71,43 +78,43 @@ export const styles = (theme) => ({
     borderRadius: 1,
     backgroundColor: 'currentColor',
     opacity: 0.38,
-    '$vertical &': {
+    ...(props.orientation === 'vertical' && {
       height: '100%',
       width: 2,
-    },
-  },
+    })
+  }),
   /* Styles applied to the track element. */
-  track: {
+  track: (theme, props) => ({
     display: 'block',
     position: 'absolute',
     height: 2,
     borderRadius: 1,
     backgroundColor: 'currentColor',
-    '$vertical &': {
+    ...(props.orientation === 'vertical' && {
       width: 2,
-    },
-  },
+    }),
+  }),
   /* Styles applied to the track element if `track={false}`. */
   trackFalse: {
-    '& $track': {
+    ' .Mui-Slider--track': {
       display: 'none',
     },
   },
   /* Styles applied to the track element if `track="inverted"`. */
-  trackInverted: {
-    '& $track': {
+  trackInverted: (theme) => ({
+    ' .Mui-Slider--track': {
       backgroundColor:
         // Same logic as the LinearProgress track color
         theme.palette.type === 'light'
           ? lighten(theme.palette.primary.main, 0.62)
           : darken(theme.palette.primary.main, 0.5),
     },
-    '& $rail': {
+    ' .Mui-Slider--rail': {
       opacity: 1,
     },
-  },
+  }),
   /* Styles applied to the thumb element. */
-  thumb: {
+  thumb: (theme, props) => ({
     position: 'absolute',
     width: 12,
     height: 12,
@@ -123,7 +130,7 @@ export const styles = (theme) => ({
     transition: theme.transitions.create(['box-shadow'], {
       duration: theme.transitions.duration.shortest,
     }),
-    '&::after': {
+    '::after': {
       position: 'absolute',
       content: '""',
       borderRadius: '50%',
@@ -133,48 +140,56 @@ export const styles = (theme) => ({
       right: -15,
       bottom: -15,
     },
-    '&$focusVisible,&:hover': {
+    ':hover': {
       boxShadow: `0px 0px 0px 8px ${fade(theme.palette.primary.main, 0.16)}`,
       '@media (hover: none)': {
         boxShadow: 'none',
       },
     },
-    '&$active': {
-      boxShadow: `0px 0px 0px 14px ${fade(theme.palette.primary.main, 0.16)}`,
-    },
-    '&$disabled': {
+    ...(props.focusVisible && {
+      boxShadow: `0px 0px 0px 8px ${fade(theme.palette.primary.main, 0.16)}`,
+      '@media (hover: none)': {
+        boxShadow: 'none',
+      },
+    }),
+    ...(props.disabled && {
       width: 8,
       height: 8,
       marginLeft: -4,
       marginTop: -3,
-      '&:hover': {
+      ':hover': {
         boxShadow: 'none',
       },
-    },
-    '$vertical &': {
+    }),
+    ...(props.orientation === 'vertical' && {
       marginLeft: -5,
       marginBottom: -6,
-    },
-    '$vertical &$disabled': {
+    }),
+    ...((props.orientation === 'vertical' || props.disabled) && {
       marginLeft: -3,
       marginBottom: -4,
-    },
-  },
+    })
+  }),
   /* Styles applied to the thumb element if `color="primary"`. */
   thumbColorPrimary: {
     // TODO v5: move the style here
   },
   /* Styles applied to the thumb element if `color="secondary"`. */
-  thumbColorSecondary: {
-    '&$focusVisible,&:hover': {
+  thumbColorSecondary: (theme, props) => ({
+    ':hover': {
       boxShadow: `0px 0px 0px 8px ${fade(theme.palette.secondary.main, 0.16)}`,
     },
-    '&$active': {
-      boxShadow: `0px 0px 0px 14px ${fade(theme.palette.secondary.main, 0.16)}`,
-    },
-  },
+    ...(props.focusVisible && {
+      boxShadow: `0px 0px 0px 8px ${fade(theme.palette.secondary.main, 0.16)}`,
+    }),
+  }),
   /* Pseudo-class applied to the thumb element if it's active. */
-  active: {},
+  active: (theme, props) => ({ // TODO: fix active style
+    boxShadow: `0px 0px 0px 14px ${fade(theme.palette.primary.main, 0.16)}`,
+    ...(props.color === 'secondary' && {
+      boxShadow: `0px 0px 0px 14px ${fade(theme.palette.secondary.main, 0.16)}`,
+    })
+  }),
   /* Pseudo-class applied to the thumb element if keyboard focused. */
   focusVisible: {},
   /* Styles applied to the thumb label element. */
@@ -191,39 +206,39 @@ export const styles = (theme) => ({
     backgroundColor: 'currentColor',
   },
   /* Styles applied to the mark element if active (depending on the value). */
-  markActive: {
+  markActive: (theme) => ({
     backgroundColor: theme.palette.background.paper,
     opacity: 0.8,
-  },
+  }),
   /* Styles applied to the mark label element. */
-  markLabel: {
+  markLabel: (theme, props = {}) => ({
     ...theme.typography.body2,
     color: theme.palette.text.secondary,
     position: 'absolute',
     top: 26,
     transform: 'translateX(-50%)',
     whiteSpace: 'nowrap',
-    '$vertical &': {
+    ...(props.orientation === 'vertical' && {
       top: 'auto',
       left: 26,
       transform: 'translateY(50%)',
-    },
+    }),
     '@media (pointer: coarse)': {
       top: 40,
-      '$vertical &': {
+      ...(props.orientation === 'vertical' && {
         left: 31,
-      },
+      }),
     },
-  },
+  }),
   /* Styles applied to the mark label element if active (depending on the value). */
-  markLabelActive: {
+  markLabelActive: (theme) => ({
     color: theme.palette.text.primary,
-  },
-});
+  }),
+};
 
-const useSliderClasses = props => {
+// This implementatino uses the ClassNames component https://emotion.sh/docs/class-names
+const Slider = React.forwardRef(function Slider(props, ref) {
   const {
-    classes,
     className,
     color = "primary",
     disabled = false,
@@ -234,6 +249,7 @@ const useSliderClasses = props => {
     max = 100,
     min = 0,
   } = props;
+  const theme = useTheme();
 
   const marks =
     marksProp === true && step !== null
@@ -241,45 +257,47 @@ const useSliderClasses = props => {
         value: min + step * index,
       }))
     : marksProp || [];
-
-  return {
-    root: clsx(
-      classes.root,
-      classes[`color${capitalize(color)}`],
-      {
-        [classes.disabled]: disabled,
-        [classes.marked]: marks.length > 0 && marks.some((mark) => mark.label),
-        [classes.vertical]: orientation === 'vertical',
-        [classes.trackInverted]: track === 'inverted',
-        [classes.trackFalse]: track === false,
-      },
-      className,
-    ),
-    rail: classes.rail,
-    track: classes.track,
-    mark: classes.mark,
-    markActive: classes.markActive,
-    markLabel: classes.markLabel,
-    markLabelActive: classes.markLabelActive, 
-    valueLabel: classes.valueLabel,
-    thumb: clsx(classes.thumb, classes[`thumbColor${capitalize(color)}`], {
-      [classes.disabled]: disabled,
-    }),
-    thumbActive: classes.active,
-    thumbFocusVisible: classes.focusVisible
-  }
-}
-
-const Slider = React.forwardRef(function Slider(props, ref) {
-  const cs = useSliderClasses(props);
-  const theme = useTheme();
   const isRtl = theme.direction === 'rtl';
 
-  return (
-    <SliderBase isRtl={isRtl} {...props} ref={ref} classes={cs} />
+  return (<ThemeProvider theme={theme}>
+    <ClassNames>
+    {({ css, cx }) => {
+      const cs =  {
+        root: cx(
+          css(callable(classes.root)(theme, props)),
+          css(callable(classes[`color${capitalize(color)}`])(theme, props)),
+          {
+            [css(callable(classes.disabled)(theme, props))]: disabled,
+            [css(callable(classes.marked)(theme, props))]: marks.length > 0 && marks.some((mark) => mark.label),
+            [css(callable(classes.vertical)(theme, props))]: orientation === 'vertical',
+            [css(callable(classes.trackInverted)(theme, props))]: track === 'inverted',
+            [css(callable(classes.trackFalse)(theme, props))]: track === false,
+          },
+          className,
+        ),
+        rail: cx(css(callable(classes.rail)(theme, props)), 'Mui-Slider--rail'),
+        track: cx(css(callable(classes.track)(theme, props)), 'Mui-Slider--rail'),
+        mark: css(callable(classes.mark)(theme, props)),
+        markActive: css(callable(classes.markActive)(theme, props)),
+        markLabel: css(callable(classes.markLabel)(theme, props)),
+        markLabelActive: css(callable(classes.markLabelActive)(theme, props)), 
+        valueLabel: css(callable(classes.valueLabel)(theme, props)),
+        thumb: cx(css(callable(classes.thumb)(theme, props)), css(callable(classes[`thumbColor${capitalize(color)}`])(theme, props)), {
+          [css(callable(classes.disabled)(theme, props))]: disabled,
+        }),
+        thumbActive: css(callable(classes.active)(theme, props)),
+        thumbFocusVisible: cx(css(callable(classes.focusVisible)(theme, props)), 'Mui-Slider--focusVisible')
+      }
+
+      return (
+        <SliderBase isRtl={isRtl} {...props} ref={ref} classes={cs} />
+      )
+    }}
+  </ClassNames>
+  </ThemeProvider>
   );
 });
 
 Slider.propTypes = sliderProptypes;
 
-export default withStyles(styles, { name: 'MuiSlider' })(Slider);
+export default Slider;
