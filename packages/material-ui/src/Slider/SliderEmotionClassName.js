@@ -152,6 +152,9 @@ export const classes = {
         boxShadow: 'none',
       },
     }),
+    '&.Mui-Slider--active': {
+      boxShadow: `0px 0px 0px 14px ${fade(theme.palette.primary.main, 0.16)}`,
+    },
     ...(props.disabled && {
       width: 8,
       height: 8,
@@ -182,14 +185,12 @@ export const classes = {
     ...(props.focusVisible && {
       boxShadow: `0px 0px 0px 8px ${fade(theme.palette.secondary.main, 0.16)}`,
     }),
+    '&.Mui-Slider--active': {
+      boxShadow: `0px 0px 0px 14px ${fade(theme.palette.secondary.main, 0.16)}`,
+    },
   }),
   /* Pseudo-class applied to the thumb element if it's active. */
-  active: (theme, props) => ({ // TODO: fix active style
-    boxShadow: `0px 0px 0px 14px ${fade(theme.palette.primary.main, 0.16)}`,
-    ...(props.color === 'secondary' && {
-      boxShadow: `0px 0px 0px 14px ${fade(theme.palette.secondary.main, 0.16)}`,
-    })
-  }),
+  active: {},
   /* Pseudo-class applied to the thumb element if keyboard focused. */
   focusVisible: {},
   /* Styles applied to the thumb label element. */
@@ -285,7 +286,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
         thumb: cx(css(callable(classes.thumb)(theme, props)), css(callable(classes[`thumbColor${capitalize(color)}`])(theme, props)), {
           [css(callable(classes.disabled)(theme, props))]: disabled,
         }),
-        thumbActive: css(callable(classes.active)(theme, props)),
+        thumbActive: 'Mui-Slider--active',
         thumbFocusVisible: cx(css(callable(classes.focusVisible)(theme, props)), 'Mui-Slider--focusVisible')
       }
 
