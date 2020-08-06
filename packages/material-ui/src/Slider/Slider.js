@@ -5,7 +5,6 @@ import withStyles from '../styles/withStyles';
 import { fade, lighten, darken } from '../styles/colorManipulator';
 import capitalize from '../utils/capitalize';
 import SliderBase from './Slider.base';
-import sliderProptypes from './propTypes';
 
 export const styles = (theme) => ({
   /* Styles applied to the root element. */
