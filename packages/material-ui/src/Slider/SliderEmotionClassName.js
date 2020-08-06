@@ -1,18 +1,15 @@
 import * as React from 'react';
-/** @jsx jsx */
-import { jsx } from '@emotion/core';
 import { ClassNames } from '@emotion/core';
 import useTheme from '../styles/useTheme';
 import { ThemeProvider } from 'emotion-theming';
 import { fade, lighten, darken } from '../styles/colorManipulator';
 import capitalize from '../utils/capitalize';
 import SliderBase from './Slider.base';
-import sliderProptypes from './propTypes';
 
 const callable = (input) => (...arg) => {
-  if(typeof input === 'function') return input(...arg);
+  if (typeof input === 'function') return input(...arg);
   return input;
-}
+};
 
 export const classes = {
   /* Styles applied to the root element. */
@@ -43,7 +40,7 @@ export const classes = {
       padding: '20px 0',
       ...(props.orientation === 'vertical' && {
         padding: '0 20px',
-      })
+      }),
     },
     '@media print': {
       colorAdjust: 'exact',
@@ -81,7 +78,7 @@ export const classes = {
     ...(props.orientation === 'vertical' && {
       height: '100%',
       width: 2,
-    })
+    }),
   }),
   /* Styles applied to the track element. */
   track: (theme, props) => ({
@@ -171,7 +168,7 @@ export const classes = {
     ...((props.orientation === 'vertical' || props.disabled) && {
       marginLeft: -3,
       marginBottom: -4,
-    })
+    }),
   }),
   /* Styles applied to the thumb element if `color="primary"`. */
   thumbColorPrimary: {
@@ -241,7 +238,7 @@ export const classes = {
 const Slider = React.forwardRef(function Slider(props, ref) {
   const {
     className,
-    color = "primary",
+    color = 'primary',
     disabled = false,
     marks: marksProp = false,
     orientation = 'horizontal',
@@ -254,51 +251,56 @@ const Slider = React.forwardRef(function Slider(props, ref) {
 
   const marks =
     marksProp === true && step !== null
-    ? [...Array(Math.floor((max - min) / step) + 1)].map((_, index) => ({
-        value: min + step * index,
-      }))
-    : marksProp || [];
+      ? [...Array(Math.floor((max - min) / step) + 1)].map((_, index) => ({
+          value: min + step * index,
+        }))
+      : marksProp || [];
   const isRtl = theme.direction === 'rtl';
 
-  return (<ThemeProvider theme={theme}>
-    <ClassNames>
-    {({ css, cx }) => {
-      const cs =  {
-        root: cx(
-          css(callable(classes.root)(theme, props)),
-          css(callable(classes[`color${capitalize(color)}`])(theme, props)),
-          {
-            [css(callable(classes.disabled)(theme, props))]: disabled,
-            [css(callable(classes.marked)(theme, props))]: marks.length > 0 && marks.some((mark) => mark.label),
-            [css(callable(classes.vertical)(theme, props))]: orientation === 'vertical',
-            [css(callable(classes.trackInverted)(theme, props))]: track === 'inverted',
-            [css(callable(classes.trackFalse)(theme, props))]: track === false,
-          },
-          className,
-        ),
-        rail: cx(css(callable(classes.rail)(theme, props)), 'MuiSlider--rail'),
-        track: cx(css(callable(classes.track)(theme, props)), 'MuiSlider--rail'),
-        mark: css(callable(classes.mark)(theme, props)),
-        markActive: css(callable(classes.markActive)(theme, props)),
-        markLabel: css(callable(classes.markLabel)(theme, props)),
-        markLabelActive: css(callable(classes.markLabelActive)(theme, props)), 
-        valueLabel: css(callable(classes.valueLabel)(theme, props)),
-        thumb: cx(css(callable(classes.thumb)(theme, props)), css(callable(classes[`thumbColor${capitalize(color)}`])(theme, props)), {
-          [css(callable(classes.disabled)(theme, props))]: disabled,
-        }),
-        thumbActive: 'MuiSlider--active',
-        thumbFocusVisible: cx(css(callable(classes.focusVisible)(theme, props)), 'MuiSlider--focusVisible')
-      }
+  return (
+    <ThemeProvider theme={theme}>
+      <ClassNames>
+        {({ css, cx }) => {
+          const cs = {
+            root: cx(
+              css(callable(classes.root)(theme, props)),
+              css(callable(classes[`color${capitalize(color)}`])(theme, props)),
+              {
+                [css(callable(classes.disabled)(theme, props))]: disabled,
+                [css(callable(classes.marked)(theme, props))]:
+                  marks.length > 0 && marks.some((mark) => mark.label),
+                [css(callable(classes.vertical)(theme, props))]: orientation === 'vertical',
+                [css(callable(classes.trackInverted)(theme, props))]: track === 'inverted',
+                [css(callable(classes.trackFalse)(theme, props))]: track === false,
+              },
+              className,
+            ),
+            rail: cx(css(callable(classes.rail)(theme, props)), 'MuiSlider--rail'),
+            track: cx(css(callable(classes.track)(theme, props)), 'MuiSlider--rail'),
+            mark: css(callable(classes.mark)(theme, props)),
+            markActive: css(callable(classes.markActive)(theme, props)),
+            markLabel: css(callable(classes.markLabel)(theme, props)),
+            markLabelActive: css(callable(classes.markLabelActive)(theme, props)),
+            valueLabel: css(callable(classes.valueLabel)(theme, props)),
+            thumb: cx(
+              css(callable(classes.thumb)(theme, props)),
+              css(callable(classes[`thumbColor${capitalize(color)}`])(theme, props)),
+              {
+                [css(callable(classes.disabled)(theme, props))]: disabled,
+              },
+            ),
+            thumbActive: 'MuiSlider--active',
+            thumbFocusVisible: cx(
+              css(callable(classes.focusVisible)(theme, props)),
+              'MuiSlider--focusVisible',
+            ),
+          };
 
-      return (
-        <SliderBase isRtl={isRtl} {...props} ref={ref} classes={cs} />
-      )
-    }}
-  </ClassNames>
-  </ThemeProvider>
+          return <SliderBase isRtl={isRtl} {...props} ref={ref} classes={cs} />;
+        }}
+      </ClassNames>
+    </ThemeProvider>
   );
 });
-
-Slider.propTypes = sliderProptypes;
 
 export default Slider;

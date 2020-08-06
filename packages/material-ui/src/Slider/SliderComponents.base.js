@@ -7,7 +7,7 @@ import ownerDocument from '../utils/ownerDocument';
 import useEventCallback from '../utils/useEventCallback';
 import useForkRef from '../utils/useForkRef';
 import useControlled from '../utils/useControlled';
-import ValueLabel from './ValueLabel';
+import ValueLabelComponent from './ValueLabel';
 
 function asc(a, b) {
   return a - b;
@@ -126,9 +126,9 @@ const Slider = React.forwardRef(function Slider(props, ref) {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     'aria-valuetext': ariaValuetext,
-    classes = {},
     className,
     color = 'primary',
+    classes = {}, // TODO: remove this
     component: Component = 'span',
     defaultValue,
     disabled = false,
@@ -144,13 +144,13 @@ const Slider = React.forwardRef(function Slider(props, ref) {
     orientation = 'horizontal',
     scale = Identity,
     step = 1,
-    ThumbComponent = 'span',
     track = 'normal',
     value: valueProp,
-    ValueLabelComponent = ValueLabel,
     valueLabelDisplay = 'off',
     valueLabelFormat = Identity,
     isRtl = false,
+    components = {},
+    componentsProps = {},
     ...other
   } = props;
 
@@ -453,10 +453,37 @@ const Slider = React.forwardRef(function Slider(props, ref) {
     ...axisProps[axis].leap(trackLeap),
   };
 
+  const Root = components.root || 'span';
+  const rootProps = componentsProps.root || {};
+
+  const Rail = components.rail || 'span';
+  const railProps = componentsProps.rail || {};
+
+  const Track = components.track || 'span';
+  const trackProps = componentsProps.track || {};
+ 
+  const Thumb = components.thumb || 'span';
+  const thumbProps = componentsProps.thumb || {};
+
+  const ValueLabel = components.valueLabel || ValueLabelComponent;
+  const valueLabelProps = componentsProps.valueLabel || {};
+
+  const Mark = components.mark || 'span';
+  const markProps = componentsProps.mark || {};
+
+  const MarkLabel = components.markLabel || 'span';
+  const markLabelProps = componentsProps.markLabel || {};
+
   return (
-    <Component ref={handleRef} className={classes.root} onMouseDown={handleMouseDown} {...other}>
-      <span className={classes.rail} />
-      <span className={classes.track} style={trackStyle} />
+    <Root
+      ref={handleRef}
+      className={className}
+      onMouseDown={handleMouseDown}
+      {...other}
+      {...rootProps}
+    >
+      <Rail {...railProps} />
+      <Track {...trackProps} style={trackStyle} />
       <input value={values.join(',')} name={name} type="hidden" />
       {marks.map((mark, index) => {
         const percent = valueToPercent(mark.value, min, max);
@@ -479,20 +506,22 @@ const Slider = React.forwardRef(function Slider(props, ref) {
 
         return (
           <React.Fragment key={mark.value}>
-            <span
+            <Mark
               style={style}
               data-index={index}
-              className={clsx(classes.mark, { [classes.markActive]: markActive })}
+              {...markProps}
+              markActive={markActive}
             />
             {mark.label != null ? (
-              <span
+              <MarkLabel
                 aria-hidden
                 data-index={index}
                 style={style}
-                className={clsx(classes.markLabel, { [classes.markLabelActive]: markActive })}
+                {...markLabelProps}
+                markLabelActive={markActive}
               >
                 {mark.label}
-              </span>
+              </MarkLabel>
             ) : null}
           </React.Fragment>
         );
@@ -502,7 +531,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
         const style = axisProps[axis].offset(percent);
 
         return (
-          <ValueLabelComponent
+          <ValueLabel
             key={index}
             valueLabelFormat={valueLabelFormat}
             valueLabelDisplay={valueLabelDisplay}
@@ -515,12 +544,16 @@ const Slider = React.forwardRef(function Slider(props, ref) {
             index={index}
             open={open === index || active === index || valueLabelDisplay === 'on'}
             disabled={disabled}
+            {...valueLabelProps}
           >
-            <ThumbComponent
-              className={clsx(classes.thumb, {
-                [classes.thumbActive]: active === index,
-                [classes.thumbFocusVisible]: focusVisible === index,
+            <Thumb
+              className={clsx({
+                'MuiSlider--active': active === index,
+                // [classes.thumbFocusVisible]: focusVisible === index,
               })}
+              {...thumbProps}
+              active={active === index}
+              focusVisible={focusVisible === index}
               tabIndex={disabled ? null : 0}
               role="slider"
               style={style}
@@ -540,10 +573,10 @@ const Slider = React.forwardRef(function Slider(props, ref) {
               onMouseOver={handleMouseOver}
               onMouseLeave={handleMouseLeave}
             />
-          </ValueLabelComponent>
+          </ValueLabel>
         );
       })}
-    </Component>
+    </Root>
   );
 });
 

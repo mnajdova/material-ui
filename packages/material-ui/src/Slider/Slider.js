@@ -221,11 +221,11 @@ export const styles = (theme) => ({
   },
 });
 
-const useSliderClasses = props => {
+const useSliderClasses = (props) => {
   const {
     classes,
     className,
-    color = "primary",
+    color = 'primary',
     disabled = false,
     marks: marksProp = false,
     orientation = 'horizontal',
@@ -237,10 +237,10 @@ const useSliderClasses = props => {
 
   const marks =
     marksProp === true && step !== null
-    ? [...Array(Math.floor((max - min) / step) + 1)].map((_, index) => ({
-        value: min + step * index,
-      }))
-    : marksProp || [];
+      ? [...Array(Math.floor((max - min) / step) + 1)].map((_, index) => ({
+          value: min + step * index,
+        }))
+      : marksProp || [];
 
   return {
     root: clsx(
@@ -260,26 +260,22 @@ const useSliderClasses = props => {
     mark: classes.mark,
     markActive: classes.markActive,
     markLabel: classes.markLabel,
-    markLabelActive: classes.markLabelActive, 
+    markLabelActive: classes.markLabelActive,
     valueLabel: classes.valueLabel,
     thumb: clsx(classes.thumb, classes[`thumbColor${capitalize(color)}`], {
       [classes.disabled]: disabled,
     }),
     thumbActive: classes.active,
-    thumbFocusVisible: classes.focusVisible
-  }
-}
+    thumbFocusVisible: classes.focusVisible,
+  };
+};
 
 const Slider = React.forwardRef(function Slider(props, ref) {
   const cs = useSliderClasses(props);
   const theme = useTheme();
   const isRtl = theme.direction === 'rtl';
 
-  return (
-    <SliderBase isRtl={isRtl} {...props} ref={ref} classes={cs} />
-  );
+  return <SliderBase isRtl={isRtl} {...props} ref={ref} classes={cs} />;
 });
-
-Slider.propTypes = sliderProptypes;
 
 export default withStyles(styles, { name: 'MuiSlider' })(Slider);

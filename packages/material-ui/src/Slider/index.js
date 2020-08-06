@@ -1,1 +1,1 @@
-export { default } from './SliderEmotionClassName';
+export { default } from './SliderEmotionStyled';
