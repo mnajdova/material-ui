@@ -632,7 +632,7 @@ Slider.propTypes = {
   /**
    * Indicates whether the theme context has rtl direction. It is set automatically.
    */
-  isRtl: PropTypes.func,
+  isRtl: PropTypes.boolean,
   /**
    * Marks indicate predetermined values to which the user can move the slider.
    * If `true` the marks will be spaced according the value of the `step` prop.

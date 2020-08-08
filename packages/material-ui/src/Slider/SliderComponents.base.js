@@ -474,16 +474,34 @@ const Slider = React.forwardRef(function Slider(props, ref) {
   const MarkLabel = components.markLabel || 'span';
   const markLabelProps = componentsProps.markLabel || {};
 
+  // all props with defaults
+  // consider extracting to hook an reusing the lint rule for the varints
+  const stateAndProps = {
+    ...props,
+    color,
+    disabled,
+    max,
+    min,
+    orientation,
+    scale,
+    step,
+    track,
+    valueLabelDisplay,
+    valueLabelFormat,
+    isRtl,
+  };
+
   return (
     <Root
       ref={handleRef}
       className={className}
       onMouseDown={handleMouseDown}
-      {...other}
+      marked={marks.length > 0 && marks.some((mark) => mark.label)}
+      {...stateAndProps}
       {...rootProps}
     >
-      <Rail {...railProps} />
-      <Track {...trackProps} style={trackStyle} />
+      <Rail {...stateAndProps} {...railProps} />
+      <Track {...stateAndProps} {...trackProps} style={trackStyle} />
       <input value={values.join(',')} name={name} type="hidden" />
       {marks.map((mark, index) => {
         const percent = valueToPercent(mark.value, min, max);
@@ -509,6 +527,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
             <Mark
               style={style}
               data-index={index}
+              {...stateAndProps}
               {...markProps}
               markActive={markActive}
             />
@@ -517,6 +536,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
                 aria-hidden
                 data-index={index}
                 style={style}
+                {...stateAndProps}
                 {...markLabelProps}
                 markLabelActive={markActive}
               >
@@ -544,6 +564,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
             index={index}
             open={open === index || active === index || valueLabelDisplay === 'on'}
             disabled={disabled}
+            {...stateAndProps}
             {...valueLabelProps}
           >
             <Thumb
@@ -551,6 +572,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
                 'MuiSlider--active': active === index,
                 // [classes.thumbFocusVisible]: focusVisible === index,
               })}
+              {...stateAndProps}
               {...thumbProps}
               active={active === index}
               focusVisible={focusVisible === index}
@@ -665,7 +687,7 @@ Slider.propTypes = {
   /**
    * Indicates whether the theme context has rtl direction. It is set automatically.
    */
-  isRtl: PropTypes.func,
+  isRtl: PropTypes.boolean,
   /**
    * Marks indicate predetermined values to which the user can move the slider.
    * If `true` the marks will be spaced according the value of the `step` prop.

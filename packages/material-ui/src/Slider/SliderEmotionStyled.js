@@ -1,17 +1,16 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import isPropValid from '@emotion/is-prop-valid';
 import useTheme from '../styles/useTheme';
 import { ThemeProvider } from 'emotion-theming';
 import { fade, lighten, darken } from '../styles/colorManipulator';
 import SliderBase from './SliderComponents.base';
 import ValueLabel from './ValueLabel';
 
-const callable = (input) => (...arg) => {
-  if (typeof input === 'function') return input(...arg);
-  return input;
-};
+const shouldForwardProp = prop => 
+  isPropValid(prop) && prop != 'color' && prop != 'orientation' && prop != 'disabled';
 
-const StyledComponent = styled.span((props) => ({
+const StyledComponent = styled('span', { shouldForwardProp })((props) => ({
   height: 2,
   width: '100%',
   boxSizing: 'content-box',
@@ -55,7 +54,7 @@ const StyledComponent = styled.span((props) => ({
   }),
 }));
 
-const StyledRail = styled.span((props) => ({
+const StyledRail = styled('span', { shouldForwardProp })((props) => ({
   display: 'block',
   position: 'absolute',
   width: '100%',
@@ -72,7 +71,7 @@ const StyledRail = styled.span((props) => ({
   }),
 }));
 
-const StyledTrack = styled.span((props) => ({
+const StyledTrack = styled('span', { shouldForwardProp })((props) => ({
   display: 'block',
   position: 'absolute',
   height: 2,
@@ -93,7 +92,7 @@ const StyledTrack = styled.span((props) => ({
   }),
 }));
 
-const StyledThumb = styled.span(
+const StyledThumb = styled('span', { shouldForwardProp })(
   props => ({
     position: 'absolute',
     width: 12,
@@ -171,7 +170,7 @@ const StyledValueLabel = styled(ValueLabel)({
   left: 'calc(-50% - 4px)',
 });
 
-const StyledMark = styled.span(
+const StyledMark = styled('span', { shouldForwardProp })(
   props => ({
     position: 'absolute',
     width: 2,
@@ -185,7 +184,7 @@ const StyledMark = styled.span(
   })
 );
 
-const StyledMarkLabel = styled.span(
+const StyledMarkLabel = styled('span', { shouldForwardProp })(
   props => ({
     ...props.theme.typography.body2,
     color: props.theme.palette.text.secondary,
@@ -212,26 +211,7 @@ const StyledMarkLabel = styled.span(
 
 // This implementatino uses the ClassNames component https://emotion.sh/docs/class-names
 const Slider = React.forwardRef(function Slider(props, ref) {
-  const {
-    className,
-    color = 'primary',
-    disabled = false,
-    marks: marksProp = false,
-    orientation = 'horizontal',
-    step = 1,
-    track = 'normal',
-    max = 100,
-    min = 0,
-    // components: componentsProp = {}
-  } = props;
   const theme = useTheme();
-
-  const marks =
-    marksProp === true && step !== null
-      ? [...Array(Math.floor((max - min) / step) + 1)].map((_, index) => ({
-          value: min + step * index,
-        }))
-      : marksProp || [];
   const isRtl = theme.direction === 'rtl';
 
   return (
@@ -248,31 +228,8 @@ const Slider = React.forwardRef(function Slider(props, ref) {
           mark: StyledMark,
           markLabel: StyledMarkLabel
         }}
-        componentsProps={{
-          // TODO: do not add these props on the element rendered
-          root: {
-            color,
-            disabled,
-            orientation,
-            marked: marks.length > 0 && marks.some((mark) => mark.label),
-          },
-          rail: {
-            orientation,
-            track,
-          },
-          track: {
-            orientation,
-            track,
-          },
-          thumb: {
-            disabled,
-            orientation,
-            color,
-          },
-          markLabel: {
-            orientation,
-          }
-        }}
+        // TODO: should we remove these if we are sending all props & state to each slot
+        componentsProps={{}}
         ref={ref}
       />
     </ThemeProvider>
