@@ -8,6 +8,7 @@ import useEventCallback from '../utils/useEventCallback';
 import useForkRef from '../utils/useForkRef';
 import useControlled from '../utils/useControlled';
 import ValueLabelComponent from './ValueLabel';
+import { useValueAndKey, useKeyOnly } from '../styles/classNameBuilders';
 
 function asc(a, b) {
   return a - b;
@@ -121,6 +122,26 @@ const axisProps = {
 
 const Identity = (x) => x;
 
+const useSliderClasses = (props) => {
+  const slots = ['root', 'rail', 'thumb', 'track', 'valueLabel', 'mark', 'markLabel'];
+  const classes = {};
+
+  slots.forEach((slot) => {
+    const slotClassName = `MuiSlider__${slot}`;
+    classes[slot] = clsx(
+      slotClassName,
+      useValueAndKey(props.color, 'color', slotClassName),
+      useValueAndKey(props.orientation, 'orientation', slotClassName),
+      useKeyOnly(props.disabled, 'disabled', slotClassName),
+      useKeyOnly(props.marked, 'marked', slotClassName),
+      useValueAndKey(props.track, 'track', slotClassName),
+      useKeyOnly(props.focusVisible, 'focusVisible', slotClassName),
+    );
+  });
+
+  return classes;
+};
+
 const Slider = React.forwardRef(function Slider(props, ref) {
   const {
     'aria-label': ariaLabel,
@@ -128,7 +149,6 @@ const Slider = React.forwardRef(function Slider(props, ref) {
     'aria-valuetext': ariaValuetext,
     className,
     color = 'primary',
-    classes = {}, // TODO: remove this
     component: Component = 'span',
     defaultValue,
     disabled = false,
@@ -461,7 +481,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
 
   const Track = components.track || 'span';
   const trackProps = componentsProps.track || {};
- 
+
   const Thumb = components.thumb || 'span';
   const thumbProps = componentsProps.thumb || {};
 
@@ -491,17 +511,22 @@ const Slider = React.forwardRef(function Slider(props, ref) {
     isRtl,
   };
 
+  const classes = useSliderClasses({
+    ...stateAndProps,
+    marked: marks.length > 0 && marks.some((mark) => mark.label),
+  });
+
   return (
     <Root
       ref={handleRef}
-      className={className}
+      className={clsx(className, classes.root)}
       onMouseDown={handleMouseDown}
       marked={marks.length > 0 && marks.some((mark) => mark.label)}
       {...stateAndProps}
       {...rootProps}
     >
-      <Rail {...stateAndProps} {...railProps} />
-      <Track {...stateAndProps} {...trackProps} style={trackStyle} />
+      <Rail {...stateAndProps} {...railProps} className={classes.rail} />
+      <Track {...stateAndProps} {...trackProps} className={classes.track} style={trackStyle} />
       <input value={values.join(',')} name={name} type="hidden" />
       {marks.map((mark, index) => {
         const percent = valueToPercent(mark.value, min, max);
@@ -529,6 +554,10 @@ const Slider = React.forwardRef(function Slider(props, ref) {
               data-index={index}
               {...stateAndProps}
               {...markProps}
+              className={clsx(
+                classes.mark,
+                useKeyOnly(markActive, 'markActive', 'MuiSlider__mark'),
+              )}
               markActive={markActive}
             />
             {mark.label != null ? (
@@ -538,6 +567,10 @@ const Slider = React.forwardRef(function Slider(props, ref) {
                 style={style}
                 {...stateAndProps}
                 {...markLabelProps}
+                className={clsx(
+                  classes.mark,
+                  useKeyOnly(markActive, 'markLabelActive', 'MuiSlider__markLabel'),
+                )}
                 markLabelActive={markActive}
               >
                 {mark.label}
@@ -568,10 +601,12 @@ const Slider = React.forwardRef(function Slider(props, ref) {
             {...valueLabelProps}
           >
             <Thumb
-              className={clsx({
-                'MuiSlider--active': active === index,
-                // [classes.thumbFocusVisible]: focusVisible === index,
-              })}
+              className={clsx(
+                {
+                  'MuiSlider--active': active === index,
+                },
+                classes.thumb,
+              )}
               {...stateAndProps}
               {...thumbProps}
               active={active === index}
