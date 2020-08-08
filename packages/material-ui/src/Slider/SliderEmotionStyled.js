@@ -1,14 +1,14 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import isPropValid from '@emotion/is-prop-valid';
-import useTheme from '../styles/useTheme';
 import { ThemeProvider } from 'emotion-theming';
+import useTheme from '../styles/useTheme';
 import { fade, lighten, darken } from '../styles/colorManipulator';
 import SliderBase from './SliderComponents.base';
 import ValueLabel from './ValueLabel';
 
 const shouldForwardProp = (prop) =>
-  isPropValid(prop) && prop != 'color' && prop != 'orientation' && prop != 'disabled';
+  isPropValid(prop) && prop !== 'color' && prop !== 'orientation' && prop !== 'disabled';
 
 const StyledComponent = styled('span', { shouldForwardProp })((props) => ({
   height: 2,

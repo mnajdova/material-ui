@@ -8,7 +8,7 @@ import useEventCallback from '../utils/useEventCallback';
 import useForkRef from '../utils/useForkRef';
 import useControlled from '../utils/useControlled';
 import ValueLabelComponent from './ValueLabel';
-import { useValueAndKey, useKeyOnly } from '../styles/classNameBuilders';
+import { getClassWithValueAndKey, getClassWithKeyOnly } from '../styles/classNameBuilders';
 
 function asc(a, b) {
   return a - b;
@@ -130,12 +130,12 @@ const useSliderClasses = (props) => {
     const slotClassName = `MuiSlider__${slot}`;
     classes[slot] = clsx(
       slotClassName,
-      useValueAndKey(props.color, 'color', slotClassName),
-      useValueAndKey(props.orientation, 'orientation', slotClassName),
-      useKeyOnly(props.disabled, 'disabled', slotClassName),
-      useKeyOnly(props.marked, 'marked', slotClassName),
-      useValueAndKey(props.track, 'track', slotClassName),
-      useKeyOnly(props.focusVisible, 'focusVisible', slotClassName),
+      getClassWithValueAndKey(props.color, 'color', slotClassName),
+      getClassWithValueAndKey(props.orientation, 'orientation', slotClassName),
+      getClassWithKeyOnly(props.disabled, 'disabled', slotClassName),
+      getClassWithKeyOnly(props.marked, 'marked', slotClassName),
+      getClassWithValueAndKey(props.track, 'track', slotClassName),
+      getClassWithKeyOnly(props.focusVisible, 'focusVisible', slotClassName),
     );
   });
 
@@ -556,7 +556,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
               {...markProps}
               className={clsx(
                 classes.mark,
-                useKeyOnly(markActive, 'markActive', 'MuiSlider__mark'),
+                getClassWithKeyOnly(markActive, 'markActive', 'MuiSlider__mark'),
               )}
               markActive={markActive}
             />
@@ -569,7 +569,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
                 {...markLabelProps}
                 className={clsx(
                   classes.mark,
-                  useKeyOnly(markActive, 'markLabelActive', 'MuiSlider__markLabel'),
+                  getClassWithKeyOnly(markActive, 'markLabelActive', 'MuiSlider__markLabel'),
                 )}
                 markLabelActive={markActive}
               >

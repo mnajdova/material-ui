@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ClassNames } from '@emotion/core';
-import useTheme from '../styles/useTheme';
 import { ThemeProvider } from 'emotion-theming';
+import useTheme from '../styles/useTheme';
 import { fade, lighten, darken } from '../styles/colorManipulator';
 import capitalize from '../utils/capitalize';
 import SliderBase from './Slider.base';
