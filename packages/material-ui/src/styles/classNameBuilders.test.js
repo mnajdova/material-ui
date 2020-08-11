@@ -4,7 +4,9 @@ import { getClassWithKeyOnly, getClassWithValueAndKey } from './classNameBuilder
 describe('classNameBuilders', () => {
   describe('getClassWithKeyOnly', () => {
     it('should create classname using the prefix and the key if the value is truthy', () => {
-      expect(getClassWithKeyOnly(true, 'disabled', 'MuiTest__root')).to.equal("MuiTest__root--disabled");
+      expect(getClassWithKeyOnly(true, 'disabled', 'MuiTest__root')).to.equal(
+        'MuiTest__root--disabled',
+      );
     });
 
     it('should return empty string it he value is undefined', () => {
@@ -18,7 +20,9 @@ describe('classNameBuilders', () => {
 
   describe('getClassWithValueAndKey', () => {
     it('should create classname using the prefix, the key and the value if the value is truthy', () => {
-      expect(getClassWithValueAndKey('primary', 'color', 'MuiTest__root')).to.equal("MuiTest__root--color-primary");
+      expect(getClassWithValueAndKey('primary', 'color', 'MuiTest__root')).to.equal(
+        'MuiTest__root--color-primary',
+      );
     });
 
     it('should return empty string it he value is undefined', () => {
