@@ -127,7 +127,7 @@ const useSliderClasses = (props) => {
   const classes = {};
 
   slots.forEach((slot) => {
-    const slotClassName = `MuiSlider__${slot}`;
+    const slotClassName = `MuiSlider-${slot === 'root' ? '' : slot}`;
     classes[slot] = clsx(
       slotClassName,
       getClassWithValueAndKey(props.color, 'color', slotClassName),
