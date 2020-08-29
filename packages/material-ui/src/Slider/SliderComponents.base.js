@@ -124,11 +124,11 @@ const Identity = (x) => x;
 
 const useSliderClasses = (props) => {
   const slots = ['root', 'rail', 'thumb', 'track', 'valueLabel', 'mark', 'markLabel'];
-  const classes = {};
+  const utilityClasses = {};
 
   slots.forEach((slot) => {
     const slotClassName = `MuiSlider-${slot === 'root' ? '' : slot}`;
-    classes[slot] = clsx(
+    utilityClasses[slot] = clsx(
       slotClassName,
       getClassWithValueAndKey(props.color, 'color', slotClassName),
       getClassWithValueAndKey(props.orientation, 'orientation', slotClassName),
@@ -139,7 +139,7 @@ const useSliderClasses = (props) => {
     );
   });
 
-  return classes;
+  return utilityClasses;
 };
 
 const Slider = React.forwardRef(function Slider(props, ref) {
@@ -148,6 +148,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
     'aria-labelledby': ariaLabelledby,
     'aria-valuetext': ariaValuetext,
     className,
+    classes = {},
     color = 'primary',
     component: Component = 'span',
     defaultValue,
@@ -511,7 +512,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
     isRtl,
   };
 
-  const classes = useSliderClasses({
+  const utilityClasses = useSliderClasses({
     ...stateAndProps,
     marked: marks.length > 0 && marks.some((mark) => mark.label),
   });
@@ -519,14 +520,14 @@ const Slider = React.forwardRef(function Slider(props, ref) {
   return (
     <Root
       ref={handleRef}
-      className={clsx(className, classes.root)}
+      className={clsx(className, classes.root, utilityClasses.root)}
       onMouseDown={handleMouseDown}
       marked={marks.length > 0 && marks.some((mark) => mark.label)}
       {...stateAndProps}
       {...rootProps}
     >
-      <Rail {...stateAndProps} {...railProps} className={classes.rail} />
-      <Track {...stateAndProps} {...trackProps} className={classes.track} style={trackStyle} />
+      <Rail {...stateAndProps} {...railProps} className={clsx(classes.rail, utilityClasses.rail)} />
+      <Track {...stateAndProps} {...trackProps} className={clsx(classes.track, utilityClasses.track)} style={trackStyle} />
       <input value={values.join(',')} name={name} type="hidden" />
       {marks.map((mark, index) => {
         const percent = valueToPercent(mark.value, min, max);
@@ -556,6 +557,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
               {...markProps}
               className={clsx(
                 classes.mark,
+                utilityClasses.mark,
                 getClassWithKeyOnly(markActive, 'markActive', 'MuiSlider__mark'),
               )}
               markActive={markActive}
@@ -569,6 +571,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
                 {...markLabelProps}
                 className={clsx(
                   classes.mark,
+                  utilityClasses.markLabel,
                   getClassWithKeyOnly(markActive, 'markLabelActive', 'MuiSlider__markLabel'),
                 )}
                 markLabelActive={markActive}
@@ -588,7 +591,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
             key={index}
             valueLabelFormat={valueLabelFormat}
             valueLabelDisplay={valueLabelDisplay}
-            className={classes.valueLabel}
+            className={clsx(classes.valueLabel, utilityClasses.valueLabel)}
             value={
               typeof valueLabelFormat === 'function'
                 ? valueLabelFormat(scale(value), index)
@@ -606,6 +609,7 @@ const Slider = React.forwardRef(function Slider(props, ref) {
                   'MuiSlider--active': active === index,
                 },
                 classes.thumb,
+                utilityClasses.thumb,
               )}
               {...stateAndProps}
               {...thumbProps}
