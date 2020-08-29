@@ -1,1 +1,2 @@
-export { default } from './Slider';
+export { default } from './SliderEmotionStyled';
+export { default as SliderBase } from './SliderEmotionStyledDefaultProps';
