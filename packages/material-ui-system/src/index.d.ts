@@ -205,3 +205,5 @@ export const visuallyHidden: React.CSSProperties;
 
 // utils
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
+
+export { default as GlobalCss } from './GlobalCss/GlobalCss';

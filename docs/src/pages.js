@@ -154,6 +154,7 @@ const pages = [
       { pathname: '/system/screen-readers' },
       { pathname: '/system/typography' },
       { pathname: '/system/api', title: 'API' },
+      { pathname: '/system/global-classes' },
     ],
   },
   {
