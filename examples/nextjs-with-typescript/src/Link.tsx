@@ -53,6 +53,7 @@ function Link(props: LinkProps) {
   });
 
   if (naked) {
+    // @ts-ignore
     return <NextComposed className={className} ref={innerRef} href={href} {...other} />;
   }
 
