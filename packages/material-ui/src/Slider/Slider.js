@@ -7,10 +7,10 @@ import useTheme from '../styles/useTheme';
 import { alpha, lighten, darken } from '../styles/colorManipulator';
 import useIsFocusVisible from '../utils/useIsFocusVisible';
 import useEnhancedEffect from '../utils/useEnhancedEffect';
-import ownerDocument from '../utils/ownerDocument';
+import { ownerDocument } from '@material-ui/utils';
 import useEventCallback from '../utils/useEventCallback';
 import useForkRef from '../utils/useForkRef';
-import capitalize from '../utils/capitalize';
+import { capitalize } from '@material-ui/utils';
 import useControlled from '../utils/useControlled';
 import ValueLabel from './ValueLabel';
 

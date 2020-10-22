@@ -3,13 +3,9 @@ import { isFragment } from 'react-is';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import MuiError from '@material-ui/utils/macros/MuiError.macro';
-import { refType } from '@material-ui/utils';
-import ownerDocument from '../utils/ownerDocument';
-import capitalize from '../utils/capitalize';
+import { refType, useForkRef, capitalize, ownerDocument, useControlled } from '@material-ui/utils';
 import Menu from '../Menu/Menu';
 import { isFilled } from '../InputBase/utils';
-import useForkRef from '../utils/useForkRef';
-import useControlled from '../utils/useControlled';
 
 function areEqualValues(a, b) {
   if (typeof b === 'object' && b !== null) {

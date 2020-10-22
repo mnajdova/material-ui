@@ -5,7 +5,7 @@ import { refType } from '@material-ui/utils';
 import SwitchBase from '../internal/SwitchBase';
 import RadioButtonIcon from './RadioButtonIcon';
 import { alpha } from '../styles/colorManipulator';
-import capitalize from '../utils/capitalize';
+import { capitalize } from '@material-ui/utils';
 import createChainedFunction from '../utils/createChainedFunction';
 import withStyles from '../styles/withStyles';
 import useRadioGroup from '../RadioGroup/useRadioGroup';

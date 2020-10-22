@@ -8,7 +8,7 @@ import {
 } from '@material-ui/utils';
 import clsx from 'clsx';
 import debounce from '../utils/debounce';
-import ownerDocument from '../utils/ownerDocument';
+import { ownerDocument } from '@material-ui/utils';
 import ownerWindow from '../utils/ownerWindow';
 import withStyles from '../styles/withStyles';
 import Modal from '../Modal';

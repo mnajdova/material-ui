@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { deepmerge, elementAcceptingRef } from '@material-ui/utils';
 import { alpha } from '../styles/colorManipulator';
 import withStyles from '../styles/withStyles';
-import capitalize from '../utils/capitalize';
+import { capitalize } from '@material-ui/utils';
 import Grow from '../Grow';
 import Popper from '../Popper';
 import useEventCallback from '../utils/useEventCallback';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OverridableComponent, OverrideProps } from '@material-ui/core/OverridableComponent';
-import { SliderTypeMap } from '../SliderUnstyled';
+import { SliderTypeMap } from '@material-ui/unstyled/Slider';
 
 export type SliderProps<
   D extends React.ElementType = SliderTypeMap['defaultComponent'],

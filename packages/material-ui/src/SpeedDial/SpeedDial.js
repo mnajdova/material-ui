@@ -6,7 +6,7 @@ import { duration } from '../styles/transitions';
 import withStyles from '../styles/withStyles';
 import Zoom from '../Zoom';
 import Fab from '../Fab';
-import capitalize from '../utils/capitalize';
+import { capitalize } from '@material-ui/utils';
 import isMuiElement from '../utils/isMuiElement';
 import useForkRef from '../utils/useForkRef';
 import useControlled from '../utils/useControlled';

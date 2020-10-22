@@ -1,5 +1,5 @@
 import getScrollbarSize from '../utils/getScrollbarSize';
-import ownerDocument from '../utils/ownerDocument';
+import { ownerDocument } from '@material-ui/utils';
 import ownerWindow from '../utils/ownerWindow';
 
 export interface ManagedModalProps {

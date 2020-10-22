@@ -2,7 +2,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { exactProp, elementAcceptingRef } from '@material-ui/utils';
-import ownerDocument from '../utils/ownerDocument';
+import { ownerDocument } from '@material-ui/utils';
 import useForkRef from '../utils/useForkRef';
 
 /**

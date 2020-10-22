@@ -7,7 +7,7 @@ import withStyles from '../styles/withStyles';
 import { emphasize, alpha } from '../styles/colorManipulator';
 import useForkRef from '../utils/useForkRef';
 import unsupportedProp from '../utils/unsupportedProp';
-import capitalize from '../utils/capitalize';
+import { capitalize } from '@material-ui/utils';
 import ButtonBase from '../ButtonBase';
 
 export const styles = (theme) => {

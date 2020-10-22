@@ -1,17 +1,17 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { chainPropTypes } from '@material-ui/utils';
 import {
-  useIsFocusVisible,
-  unstable_useEnhancedEffect as useEnhancedEffect,
+  capitalize,
+  chainPropTypes,
   ownerDocument,
+  useControlled,
+  useIsFocusVisible,
   useEventCallback,
   useForkRef,
-  capitalize,
-  useControlled,
-} from '@material-ui/core/utils';
-import ValueLabelComponent from './ValueLabelUnstyled';
+  unstable_useEnhancedEffect as useEnhancedEffect,
+} from '@material-ui/utils';
+import ValueLabelComponent from './ValueLabel';
 
 function asc(a, b) {
   return a - b;
@@ -174,7 +174,7 @@ const useSliderClasses = (props) => {
 
 const isComponent = (element) => typeof element !== 'string';
 
-const SliderUnstyled = React.forwardRef(function SliderUnstyled(props, ref) {
+const Slider = React.forwardRef(function Slider(props, ref) {
   const {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
@@ -735,7 +735,7 @@ const SliderUnstyled = React.forwardRef(function SliderUnstyled(props, ref) {
   );
 });
 
-SliderUnstyled.propTypes = {
+Slider.propTypes = {
   // ----------------------------- Warning --------------------------------
   // | These PropTypes are generated from the TypeScript type definitions |
   // |     To update them edit the d.ts file and run "yarn proptypes"     |
@@ -941,4 +941,4 @@ SliderUnstyled.propTypes = {
   valueLabelFormat: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 };
 
-export default SliderUnstyled;
+export default Slider;

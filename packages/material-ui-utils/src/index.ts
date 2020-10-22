@@ -1,3 +1,4 @@
+export { default as capitalize } from './capitalize';
 export { default as chainPropTypes } from './chainPropTypes';
 export { default as deepmerge } from './deepmerge';
 export { default as elementAcceptingRef } from './elementAcceptingRef';
@@ -6,5 +7,11 @@ export { default as exactProp } from './exactProp';
 export { default as formatMuiErrorMessage } from './formatMuiErrorMessage';
 export { default as getDisplayName } from './getDisplayName';
 export { default as HTMLElementType } from './HTMLElementType';
+export { default as ownerDocument } from './ownerDocument';
 export { default as ponyfillGlobal } from './ponyfillGlobal';
 export { default as refType } from './refType';
+export { default as useControlled } from './useControlled';
+export { default as useIsFocusVisible } from './useIsFocusVisible';
+export { default as useEventCallback } from './useEventCallback';
+export { default as useForkRef } from './useForkRef';
+export { default as unstable_useEnhancedEffect } from './useEnhancedEffect';

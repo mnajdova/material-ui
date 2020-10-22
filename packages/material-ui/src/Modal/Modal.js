@@ -2,7 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { getThemeProps, useTheme } from '@material-ui/styles';
 import { elementAcceptingRef, HTMLElementType } from '@material-ui/utils';
-import ownerDocument from '../utils/ownerDocument';
+import { ownerDocument } from '@material-ui/utils';
 import Portal from '../Portal';
 import createChainedFunction from '../utils/createChainedFunction';
 import useForkRef from '../utils/useForkRef';

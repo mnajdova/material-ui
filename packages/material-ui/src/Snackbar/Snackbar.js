@@ -5,7 +5,7 @@ import withStyles from '../styles/withStyles';
 import { duration } from '../styles/transitions';
 import ClickAwayListener from '../ClickAwayListener';
 import useEventCallback from '../utils/useEventCallback';
-import capitalize from '../utils/capitalize';
+import { capitalize } from '@material-ui/utils';
 import Grow from '../Grow';
 import SnackbarContent from '../SnackbarContent';
 

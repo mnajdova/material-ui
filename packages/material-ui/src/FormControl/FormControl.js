@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { isFilled, isAdornedStart } from '../InputBase/utils';
 import withStyles from '../styles/withStyles';
-import capitalize from '../utils/capitalize';
+import { capitalize } from '@material-ui/utils';
 import isMuiElement from '../utils/isMuiElement';
 import FormControlContext from './FormControlContext';
 

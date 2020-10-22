@@ -8,7 +8,7 @@ import {
   darken,
 } from '@material-ui/core/styles';
 import { capitalize } from '@material-ui/core/utils';
-import SliderUnstyled from '../SliderUnstyled';
+import SliderUnstyled from '@material-ui/unstyled/Slider';
 import ValueLabelStyled from './ValueLabelStyled';
 
 const overridesResolver = (props, styles, name) => {
