@@ -1,4 +1,4 @@
-export * from './colorManipulator';
+export * from '@material-ui/theming/colorManipulator';
 export {
   default as createMuiTheme,
   default as unstable_createMuiStrictModeTheme,
@@ -7,22 +7,23 @@ export {
   ThemeOptions,
   Theme,
   Direction,
-} from './createMuiTheme';
+} from '@material-ui/theming/createTheme';
 export { default as adaptV4Theme, DeprecatedThemeOptions } from './adaptV4Theme';
-export {
-  Palette,
-  PaletteColor,
-  PaletteColorOptions,
-  PaletteOptions,
-  SimplePaletteColorOptions,
-} from './createPalette';
-export { default as createStyles } from './createStyles';
-export {
-  Typography as TypographyVariants,
-  TypographyOptions as TypographyVariantsOptions,
-  TypographyStyle,
-  Variant as TypographyVariant,
-} from './createTypography';
+// TODO: Fix these
+// export {
+//   Palette,
+//   PaletteColor,
+//   PaletteColorOptions,
+//   PaletteOptions,
+//   SimplePaletteColorOptions,
+// } from '/createPalette';
+// export { default as createStyles } from './createStyles';
+// export {
+//   Typography as TypographyVariants,
+//   TypographyOptions as TypographyVariantsOptions,
+//   TypographyStyle,
+//   Variant as TypographyVariant,
+// } from './createTypography';
 export { default as makeStyles } from './makeStyles';
 export { default as responsiveFontSizes } from './responsiveFontSizes';
 export { ComponentsPropsList } from './props';

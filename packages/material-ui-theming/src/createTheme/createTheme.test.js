@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import createMuiTheme from './createMuiTheme';
+import createMuiTheme from './createTheme';
 import { deepOrange, green } from '../colors';
 
 describe('createMuiTheme', () => {

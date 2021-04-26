@@ -1,6 +1,6 @@
+export { default as createMuiTheme } from '@material-ui/theming/createTheme';
 export { default as adaptV4Theme } from './adaptV4Theme';
-export * from './colorManipulator';
-export { default as createMuiTheme } from './createMuiTheme';
+export * from '@material-ui/theming/colorManipulator';
 export { default as unstable_createMuiStrictModeTheme } from './createMuiStrictModeTheme';
 export { getUnit as unstable_getUnit, toUnitless as unstable_toUnitless } from './cssUtils';
 export { default as makeStyles } from './makeStyles';

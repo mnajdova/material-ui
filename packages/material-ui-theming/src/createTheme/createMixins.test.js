@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import createMixins from './createMixins';
-import createMuiTheme from './createMuiTheme';
+import createMuiTheme from './createTheme';
 
 describe('createMixins', () => {
   it('should be able add other mixins', () => {
