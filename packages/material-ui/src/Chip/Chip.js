@@ -244,10 +244,11 @@ const ChipRoot = styled('div', {
       [`& .${chipClasses.icon}`]: {
         marginLeft: 4,
       },
-      
+
       [`& .${chipClasses.iconSmall}`]: {
         marginLeft: 2,
       },
+      
       [`& .${chipClasses.deleteIcon}`]: {
         marginRight: 5,
       },
