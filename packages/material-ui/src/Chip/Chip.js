@@ -240,6 +240,7 @@ const ChipRoot = styled('div', {
       [`& .${chipClasses.avatarSmall}`]: {
         marginLeft: 2,
       },
+      
       [`& .${chipClasses.icon}`]: {
         marginLeft: 4,
       },
