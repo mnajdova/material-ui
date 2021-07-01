@@ -231,6 +231,7 @@ const ChipRoot = styled('div', {
       [`&.${chipClasses.clickable}:hover`]: {
         backgroundColor: theme.palette.action.hover,
       },
+      
       [`&.${chipClasses.focusVisible}`]: {
         backgroundColor: theme.palette.action.focus,
       },
