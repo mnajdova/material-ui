@@ -234,9 +234,11 @@ const ChipRoot = styled('div', {
       [`&.${chipClasses.focusVisible}`]: {
         backgroundColor: theme.palette.action.focus,
       },
+      
       [`& .${chipClasses.avatar}`]: {
         marginLeft: 4,
       },
+
       [`& .${chipClasses.avatarSmall}`]: {
         marginLeft: 2,
       },
@@ -248,10 +250,11 @@ const ChipRoot = styled('div', {
       [`& .${chipClasses.iconSmall}`]: {
         marginLeft: 2,
       },
-      
+
       [`& .${chipClasses.deleteIcon}`]: {
         marginRight: 5,
       },
+
       [`& .${chipClasses.deleteIconSmall}`]: {
         marginRight: 3,
       },
