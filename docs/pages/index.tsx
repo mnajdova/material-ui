@@ -1,197 +1,139 @@
 import * as React from 'react';
-import { styled } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Typography, { TypographyProps } from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import Steps from 'docs/src/pages/landing/Steps';
-import Themes from 'docs/src/pages/landing/Themes';
-import QuickWord from 'docs/src/pages/landing/QuickWord';
-import Sponsors, {
-  getInitialProps as getInitialSponsorsProps,
-} from 'docs/src/pages/landing/Sponsors';
-import Users from 'docs/src/pages/landing/Users';
-import Quotes from 'docs/src/pages/landing/Quotes';
-import Pro from 'docs/src/pages/landing/Pro';
-import AppFooter from 'docs/src/modules/components/AppFooter';
-import AppFrame from 'docs/src/modules/components/AppFrame';
-import Link from 'docs/src/modules/components/Link';
-import Head from 'docs/src/modules/components/Head';
-import loadScript from 'docs/src/modules/utils/loadScript';
-import { useTranslate } from 'docs/src/modules/utils/i18n';
+import { EmotionCache, withEmotionCache, ClassNames } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { CSSInterpolation, serializeStyles } from "@emotion/serialize";
+import { insertStyles } from "@emotion/utils";
+import { styled, useTheme } from '@material-ui/core/styles';
+import { createUseClassNamesFactory } from "tss-react";
 
-let dependenciesLoaded = false;
+const { createUseClassNames } = createUseClassNamesFactory({ useTheme });
 
-function loadDependencies() {
-  if (dependenciesLoaded) {
-    return;
-  }
+const makeStylesTss = createUseClassNames;
 
-  dependenciesLoaded = true;
-
-  loadScript('https://buttons.github.io/buttons.js', document.querySelector('head'));
-  loadScript('https://platform.twitter.com/widgets.js', document.querySelector('head'));
-}
-
-const Content = styled(Container)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  textAlign: 'center',
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(8),
-  [theme.breakpoints.up('md')]: {
-    paddingTop: theme.spacing(16),
-    paddingBottom: theme.spacing(16),
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    textAlign: 'left',
-  },
-}));
-
-const Title = styled(Typography)<TypographyProps & { component?: React.ElementType }>(
-  ({ theme }) => ({
-    marginLeft: -12,
-    whiteSpace: 'nowrap',
-    letterSpacing: '.7rem',
-    textIndent: '.7rem',
-    fontWeight: theme.typography.fontWeightLight,
-    [theme.breakpoints.only('xs')]: {
-      fontSize: 28,
+const useMakeStylesTssResult = makeStylesTss()(
+  (theme)=> ({
+    root: {
+      color: 'lightgreen',
+      // backgroundColor: theme.palette.primary.main
     },
-  }),
+  })
 );
 
-const Logo = styled('img')(({ theme }) => ({
-  flexShrink: 0,
-  width: 120,
-  height: 120,
-  marginBottom: theme.spacing(2),
-  [theme.breakpoints.up('md')]: {
-    marginRight: theme.spacing(8),
-    width: 195,
-    height: 175,
-  },
-}));
+const { useClassNames } = useMakeStylesTssResult;
+console.log(useMakeStylesTssResult);
 
-const Social = styled('div')(({ theme }) => ({
-  padding: theme.spacing(2, 0),
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  minHeight: 21,
-  boxSizing: 'content-box',
-  '& a': {
-    color: theme.palette.background.paper,
-  },
-}));
+const useStylesTss = useClassNames;
 
-interface LandingPageProps {
-  sponsorsProps: {
-    docs: object;
+const defaultCache = createCache({ key: "css" });
+const CacheContext = React.createContext<EmotionCache>(defaultCache);
+export const useEmotionCache = () => React.useContext(CacheContext);
+
+// We wrap our App with this
+export const CacheProvider = withEmotionCache(
+  ({ children }: { children: React.ReactNode }, cache: EmotionCache) => {
+    return (
+      <CacheContext.Provider value={cache}>{children}</CacheContext.Provider>
+    );
+  }
+);
+
+// export function useCssClassName(
+//   ...args: Array<CSSInterpolation>
+// ): () => string {
+//   const cache = useEmotionCache();
+//   return useCallback(() => {
+//     if (!cache) {
+//       console.log("No cache");
+//     }
+//     const serialized = serializeStyles(args, cache.registered);
+//     insertStyles(cache, serialized, false);
+//     return cache.key + "-" + serialized.name;
+//   }, [cache, args]);
+// }
+
+export function makeStyles(styles) {
+  return (props = {}): Record<string, string> => {
+    const cache = useEmotionCache();
+    if (!cache) {
+      console.log("No cache");
+    }
+
+    const result = Object.keys(styles).reduce((acc, key) => {
+      // TODO: handle props
+      const serialized = serializeStyles(
+        [styles[key]],
+        cache.registered,
+        props
+      );
+      insertStyles(cache, serialized, false);
+      acc[key] = (cache.key || "css") + "-" + serialized.name;
+      return acc;
+    }, {});
+
+    return result;
+
+    // const serialized = serializeStyles(args, cache.registered);
+    // insertStyles(cache, serialized, false);
+    // return cache.key + "-" + serialized.name;
   };
 }
 
-export default function LandingPage(props: LandingPageProps) {
-  const { sponsorsProps } = props;
+const useStyles = makeStyles({
+  root: {
+    color: "lightgreen"
+  }
+});
 
-  React.useEffect(() => {
-    loadDependencies();
-  }, []);
-  const t = useTranslate();
+export let isBrowser = typeof document !== 'undefined'
 
-  return (
-    <AppFrame>
-      <Box sx={{ flex: '1 0 100%' }}>
-        <Head />
-        <main id="main-content" tabIndex={-1}>
-          <Box sx={{ pt: 8, color: 'primary.main' }}>
-            <Content maxWidth="md">
-              <Logo src="/static/logo_raw.svg" alt="" />
-              <div>
-                <Title variant="h3" component="h1" color="inherit" gutterBottom>
-                  {'MATERIAL-UI'}
-                </Title>
-                <Typography variant="h5" component="p" color="inherit">
-                  {t('strapline')}
-                </Typography>
-                <Button
-                  component={Link}
-                  noLinkStyle
-                  href="/getting-started/installation"
-                  sx={{ mt: 4 }}
-                  variant="outlined"
-                >
-                  {t('getStarted')}
-                </Button>
-              </div>
-            </Content>
-          </Box>
-          <Social>
-            <Box
-              sx={{
-                width: 105,
-                display: 'flex',
-                justifyContent: 'flex-end',
-                mr: 1,
-                '& span': { display: 'flex' },
-              }}
-            >
-              <a
-                className="github-button"
-                href="https://github.com/mui-org/material-ui"
-                data-icon="octicon-star"
-                data-show-count="true"
-              >
-                Star
-              </a>
-            </Box>
-            <Box sx={{ width: 160, display: 'flex' }}>
-              <a
-                className="twitter-follow-button"
-                href="https://twitter.com/@materialui"
-                data-show-screen-name="false"
-              >
-                Follow
-              </a>
-            </Box>
-          </Social>
-          <Pro />
-          <QuickWord />
-          <Steps />
-          <Themes />
-          <Sponsors {...sponsorsProps} />
-          <Quotes />
-          <Users />
-        </main>
-        <AppFooter />
-      </Box>
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: `
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Material-UI",
-  "url": "https://material-ui.com/",
-  "logo": "https://material-ui.com/static/logo.png",
-  "sameAs": [
-    "https://twitter.com/materialUI",
-    "https://github.com/mui-org/material-ui",
-    "https://opencollective.com/material-ui"
-  ]
-}
-          `,
-        }}
-      />
-    </AppFrame>
-  );
+const Div = styled('div')({
+  background: 'green',
+  color: 'white',
+  margin: 'auto',
+  textAlign: 'center',
+  fontSize: 30,
+  height: 100,
+});
+
+export function makeStyles2(...args) {
+  
+  let rules = ''
+  let serializedHashes = ''
+  let hasRendered = false
+
+  let css = () => {
+    const cache = useEmotionCache();
+    if (hasRendered && process.env.NODE_ENV !== 'production') {
+      throw new Error('css can only be used during render')
+    }
+    let serialized = serializeStyles(args, cache.registered)
+    if (isBrowser) {
+      insertStyles(cache, serialized, false)
+    } else {
+      let res = insertStyles(cache, serialized, false)
+      if (res !== undefined) {
+        rules += res
+      }
+    }
+    if (!isBrowser) {
+      serializedHashes += ` ${serialized.name}`
+    }
+    return `${cache.key}-${serialized.name}`
+  }
+  return css;
 }
 
-LandingPage.getInitialProps = async () => {
-  return {
-    sponsorsProps: await getInitialSponsorsProps(),
-  };
-};
+const useStyles2 = makeStyles2({color: 'lightgreen'});
+
+export default function App(){
+  const classes = useStyles();
+  const c = useStyles2();
+  const result = useStylesTss({});
+  const { classNames } = result;
+  console.log(result);
+  return (<>
+    <Div className={classes.root}>Some content</Div>
+    <Div className={c}>Some content</Div>
+    <Div className={classNames.root}>Some content</Div>
+  </>);
+}

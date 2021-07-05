@@ -130,7 +130,10 @@ MyDocument.getInitialProps = async (ctx) => {
   const originalRenderPage = ctx.renderPage;
 
   const cache = getCache();
-  const { extractCriticalToChunks } = createEmotionServer(cache);
+  const createEmotionResult = createEmotionServer(cache);
+  const { extractCritical, extractCriticalToChunks } = createEmotionResult;
+  
+  console.log(createEmotionResult);
 
   try {
     ctx.renderPage = () =>
@@ -148,6 +151,8 @@ MyDocument.getInitialProps = async (ctx) => {
 
     const initialProps = await Document.getInitialProps(ctx);
     const emotionStyles = extractCriticalToChunks(initialProps.html);
+    const extractCriticalResult = extractCritical(initialProps.html);
+
     const emotionStyleTags = emotionStyles.styles.map((style) => (
       <style
         data-emotion={`${style.key} ${style.ids.join(' ')}`}
@@ -156,6 +161,8 @@ MyDocument.getInitialProps = async (ctx) => {
         dangerouslySetInnerHTML={{ __html: style.css }}
       />
     ));
+
+    console.log(extractCriticalResult);
 
     let css = materialSheets.toString();
     // It might be undefined, e.g. after an error.

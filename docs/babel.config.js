@@ -46,13 +46,16 @@ module.exports = {
     [
       'next/babel',
       {
-        'preset-react': { runtime: 'automatic' },
-        'transform-runtime': { corejs: 2, version: transformRuntimeVersion },
-      },
+        'preset-react': {
+          "runtime": "automatic",
+          "importSource": "@emotion/react"
+        }
+      }
     ],
   ],
   plugins: [
     [
+      "@emotion/babel-plugin",
       'babel-plugin-macros',
       {
         muiError: {
