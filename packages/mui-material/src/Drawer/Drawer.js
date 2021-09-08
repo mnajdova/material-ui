@@ -164,9 +164,13 @@ const Drawer = React.forwardRef(function Drawer(inProps, ref) {
     TransitionComponent = Slide,
     transitionDuration = defaultTransitionDuration,
     variant = 'temporary',
+    components,
+    componentsProps,
     ...other
   } = props;
   const theme = useTheme();
+
+  const DrawerPaperComponent = components?.Paper || DrawerPaper;
 
   // Let's assume that the Drawer will always be rendered on user space.
   // We use this state is order to skip the appear transition during the
@@ -191,15 +195,16 @@ const Drawer = React.forwardRef(function Drawer(inProps, ref) {
   const classes = useUtilityClasses(ownerState);
 
   const drawer = (
-    <DrawerPaper
+    <DrawerPaperComponent
       elevation={variant === 'temporary' ? elevation : 0}
       square
       {...PaperProps}
-      className={clsx(classes.paper, PaperProps.className)}
+      {...componentsProps?.paper}
+      className={clsx(classes.paper, PaperProps.className, componentsProps?.paper?.className)}
       ownerState={ownerState}
     >
       {children}
-    </DrawerPaper>
+    </DrawerPaperComponent>
   );
 
   if (variant === 'permanent') {

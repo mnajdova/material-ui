@@ -7,7 +7,9 @@ import { PaperProps } from '../Paper';
 import { TransitionProps } from '../transitions/transition';
 import { DrawerClasses } from './drawerClasses';
 
-export interface DrawerProps extends StandardProps<ModalProps, 'open' | 'children'> {
+export interface DrawerComponentsPropsOverrides {}
+
+export interface DrawerProps extends StandardProps<ModalProps, 'open' | 'children' | 'components' | 'componentsProps'> {
   /**
    * Side from which the drawer will appear.
    * @default 'left'
@@ -21,6 +23,25 @@ export interface DrawerProps extends StandardProps<ModalProps, 'open' | 'childre
    * Override or extend the styles applied to the component.
    */
   classes?: Partial<DrawerClasses>;
+  /**
+   * The components used for each slot inside the InputBase.
+   * Either a string to use a HTML element or a component.
+   * @default {}
+   */
+  components?: {
+    Root?: React.ElementType;
+    Transition?: React.ElementType;
+    Paper?: React.ElementType;
+  };
+  /**
+   * The props used for each slot inside the Input.
+   * @default {}
+   */
+  componentsProps?: {
+    root?: React.HTMLAttributes<HTMLDivElement> & DrawerComponentsPropsOverrides;
+    transition?: React.InputHTMLAttributes<HTMLInputElement> & DrawerComponentsPropsOverrides;
+    paper?: React.InputHTMLAttributes<HTMLInputElement> & DrawerComponentsPropsOverrides;
+  };
   /**
    * The elevation of the drawer.
    * @default 16
