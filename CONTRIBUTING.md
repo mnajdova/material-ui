@@ -211,7 +211,7 @@ Now, every time you import `material-ui` in your project, it is going to use you
 
 ## Roadmap
 
-To get a sense of where Material-UI is heading, or for ideas on where you could contribute, take a look at the [ROADMAP](https://github.com/mui-org/material-ui/blob/master/ROADMAP.md).
+To get a sense of where Material-UI is heading, or for ideas on where you could contribute, take a look at the [ROADMAP](https://github.com/mui-org/material-ui/blob/v3.x/ROADMAP.md).
 
 ## License
 
