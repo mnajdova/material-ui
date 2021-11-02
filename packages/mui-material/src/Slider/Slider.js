@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { chainPropTypes } from '@mui/utils';
 import { generateUtilityClasses, isHostComponent } from '@mui/core';
 import SliderUnstyled, {
+  useSliderContext,
   SliderValueLabelUnstyled,
   sliderUnstyledClasses,
   getSliderUtilityClass,
@@ -26,7 +27,14 @@ export const sliderClasses = {
   ]),
 };
 
-export const SliderRoot = styled('span', {
+const SliderRoot = React.forwardRef((props, ref) => {
+  const { color, size, ...other } = props;
+  const ownerState = useSliderContext();
+
+  return <SliderStyledRoot ref={ref} {...other} ownerState={{ ...ownerState, color, size, ...props.ownerState }} />
+})
+
+export const SliderStyledRoot = styled('span', {
   name: 'MuiSlider',
   slot: 'Root',
   overridesResolver: (props, styles) => {
@@ -109,7 +117,12 @@ export const SliderRoot = styled('span', {
   },
 }));
 
-export const SliderRail = styled('span', {
+const SliderRail = (props) => {
+  const ownerState = useSliderContext();
+  return <SliderStyledRail {...props} ownerState={{ ...ownerState, ...props.ownerState }} />;
+}
+
+export const SliderStyledRail = styled('span', {
   name: 'MuiSlider',
   slot: 'Rail',
   overridesResolver: (props, styles) => styles.rail,
@@ -136,7 +149,13 @@ export const SliderRail = styled('span', {
   }),
 }));
 
-export const SliderTrack = styled('span', {
+const SliderTrack = (props) => {
+  const { color, size, ...other } = props;
+  const ownerState = useSliderContext();
+  return <SliderStyledTrack {...other} ownerState={{ ...ownerState, size, color, ...props.ownerState }} />
+}
+
+export const SliderStyledTrack = styled('span', {
   name: 'MuiSlider',
   slot: 'Track',
   overridesResolver: (props, styles) => styles.track,
@@ -177,7 +196,13 @@ export const SliderTrack = styled('span', {
   };
 });
 
-export const SliderThumb = styled('span', {
+export const SliderThumb = (props) => {
+  const { color, size, ...other } = props;
+  const ownerState = useSliderContext();
+  return <SliderStyledThumb {...other} ownerState={{ ...ownerState, color, size, ...props.ownerState }} />;
+}
+
+export const SliderStyledThumb = styled('span', {
   name: 'MuiSlider',
   slot: 'Thumb',
   overridesResolver: (props, styles) => {
@@ -252,7 +277,13 @@ export const SliderThumb = styled('span', {
   },
 }));
 
-export const SliderValueLabel = styled(SliderValueLabelUnstyled, {
+const SliderValueLabel = (props) => {
+  const { color, size, ...other } = props;
+  const ownerState = useSliderContext();
+  return <SliderStyledValueLabel {...other} ownerState={{ ...ownerState, color, size, ...props.ownerState }} />
+}
+
+export const SliderStyledValueLabel = styled(SliderValueLabelUnstyled, {
   name: 'MuiSlider',
   slot: 'ValueLabel',
   overridesResolver: (props, styles) => styles.valueLabel,
@@ -294,7 +325,12 @@ export const SliderValueLabel = styled(SliderValueLabelUnstyled, {
   },
 }));
 
-export const SliderMark = styled('span', {
+const SliderMark = (props) => {
+  const ownerState = useSliderContext();
+  return <SliderStyledMark {...props} ownerState={{ ...ownerState, ...props.ownerState }} />
+}
+
+export const SliderStyledMark = styled('span', {
   name: 'MuiSlider',
   slot: 'Mark',
   shouldForwardProp: (prop) => slotShouldForwardProp(prop) && prop !== 'markActive',
@@ -319,7 +355,12 @@ export const SliderMark = styled('span', {
   }),
 }));
 
-export const SliderMarkLabel = styled('span', {
+const SliderMarkLabel = (props) => {
+  const ownerState = useSliderContext();
+  return <SliderStyledMarkLabel {...props} ownerState={{ ...ownerState, ...props.ownerState }} />
+}
+
+export const SliderStyledMarkLabel = styled('span', {
   name: 'MuiSlider',
   slot: 'MarkLabel',
   shouldForwardProp: (prop) => slotShouldForwardProp(prop) && prop !== 'markLabelActive',
@@ -417,7 +458,7 @@ const extendUtilityClasses = (ownerState) => {
   };
 };
 
-const shouldSpreadOwnerState = (Component) => {
+const shouldSpreadAdditionalProps = (Component) => {
   return !Component || !isHostComponent(Component);
 };
 
@@ -435,9 +476,7 @@ const Slider = React.forwardRef(function Slider(inputProps, ref) {
     ...other
   } = props;
 
-  const ownerState = { ...props, color, size };
-
-  const classes = extendUtilityClasses(ownerState);
+  const classes = extendUtilityClasses({ ...props, color, size });
 
   return (
     <SliderUnstyled
@@ -457,26 +496,26 @@ const Slider = React.forwardRef(function Slider(inputProps, ref) {
         ...componentsProps,
         root: {
           ...componentsProps.root,
-          ...(shouldSpreadOwnerState(components.Root) && {
-            ownerState: { ...componentsProps.root?.ownerState, color, size },
+          ...(shouldSpreadAdditionalProps(components.Root) && {
+            color, size,
           }),
         },
         thumb: {
           ...componentsProps.thumb,
-          ...(shouldSpreadOwnerState(components.Thumb) && {
-            ownerState: { ...componentsProps.thumb?.ownerState, color, size },
+          ...(shouldSpreadAdditionalProps(components.Thumb) && {
+            color, size,
           }),
         },
         track: {
           ...componentsProps.track,
-          ...(shouldSpreadOwnerState(components.Track) && {
-            ownerState: { ...componentsProps.track?.ownerState, color, size },
+          ...(shouldSpreadAdditionalProps(components.Track) && {
+            color, size,
           }),
         },
         valueLabel: {
           ...componentsProps.valueLabel,
-          ...(shouldSpreadOwnerState(components.ValueLabel) && {
-            ownerState: { ...componentsProps.valueLabel?.ownerState, color, size },
+          ...(shouldSpreadAdditionalProps(components.ValueLabel) && {
+            color, size,
           }),
         },
       }}

@@ -6,3 +6,6 @@ export * from './SliderValueLabelUnstyled';
 
 export { default as sliderUnstyledClasses } from './sliderUnstyledClasses';
 export * from './sliderUnstyledClasses';
+
+export { default as SliderContext } from './SliderContext';
+export * from './SliderContext';

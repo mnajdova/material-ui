@@ -15,6 +15,7 @@ import isHostComponent from '../utils/isHostComponent';
 import composeClasses from '../composeClasses';
 import { getSliderUtilityClass } from './sliderUnstyledClasses';
 import SliderValueLabelUnstyled from './SliderValueLabelUnstyled';
+import SliderContext from './SliderContext';
 
 const INTENTIONAL_DRAG_COUNT_THRESHOLD = 2;
 
@@ -628,168 +629,180 @@ const SliderUnstyled = React.forwardRef(function SliderUnstyled(props, ref) {
 
   const classes = useUtilityClasses(ownerState);
 
+  const context = React.useMemo(() => ({
+    classes,
+    disabled,
+    dragging,
+    isRtl,
+    marked: marks.length > 0 && marks.some((mark) => mark.label),
+    max,
+    min,
+    orientation,
+    scale,
+    step,
+    track,
+    valueLabelDisplay,
+    valueLabelFormat,
+  }), [
+    classes,
+    disabled,
+    dragging,
+    isRtl,
+    marks,
+    max,
+    min,
+    orientation,
+    scale,
+    step,
+    track,
+    valueLabelDisplay,
+    valueLabelFormat,
+  ]);
+
   return (
-    <Root
-      ref={handleRef}
-      onMouseDown={handleMouseDown}
-      {...rootProps}
-      {...(!isHostComponent(Root) && {
-        as: component,
-        ownerState: { ...ownerState, ...rootProps.ownerState },
-      })}
-      {...other}
-      className={clsx(classes.root, rootProps.className, className)}
-    >
-      <Rail
-        {...railProps}
-        {...(!isHostComponent(Rail) && {
-          ownerState: { ...ownerState, ...railProps.ownerState },
+    <SliderContext.Provider value={context}>
+      <Root
+        ref={handleRef}
+        onMouseDown={handleMouseDown}
+        {...rootProps}
+        {...(!isHostComponent(Root) && {
+          as: component,
         })}
-        className={clsx(classes.rail, railProps.className)}
-      />
-      <Track
-        {...trackProps}
-        {...(!isHostComponent(Track) && {
-          ownerState: { ...ownerState, ...trackProps.ownerState },
-        })}
-        className={clsx(classes.track, trackProps.className)}
-        style={{ ...trackStyle, ...trackProps.style }}
-      />
-      {marks.map((mark, index) => {
-        const percent = valueToPercent(mark.value, min, max);
-        const style = axisProps[axis].offset(percent);
+        {...other}
+        className={clsx(classes.root, rootProps.className, className)}
+      >
+        <Rail
+          {...railProps}
+          className={clsx(classes.rail, railProps.className)}
+        />
+        <Track
+          {...trackProps}
+          className={clsx(classes.track, trackProps.className)}
+          style={{ ...trackStyle, ...trackProps.style }}
+        />
+        {marks.map((mark, index) => {
+          const percent = valueToPercent(mark.value, min, max);
+          const style = axisProps[axis].offset(percent);
 
-        let markActive;
-        if (track === false) {
-          markActive = values.indexOf(mark.value) !== -1;
-        } else {
-          markActive =
-            (track === 'normal' &&
-              (range
-                ? mark.value >= values[0] && mark.value <= values[values.length - 1]
-                : mark.value <= values[0])) ||
-            (track === 'inverted' &&
-              (range
-                ? mark.value <= values[0] || mark.value >= values[values.length - 1]
-                : mark.value >= values[0]));
-        }
+          let markActive;
+          if (track === false) {
+            markActive = values.indexOf(mark.value) !== -1;
+          } else {
+            markActive =
+              (track === 'normal' &&
+                (range
+                  ? mark.value >= values[0] && mark.value <= values[values.length - 1]
+                  : mark.value <= values[0])) ||
+              (track === 'inverted' &&
+                (range
+                  ? mark.value <= values[0] || mark.value >= values[values.length - 1]
+                  : mark.value >= values[0]));
+          }
 
-        return (
-          <React.Fragment key={mark.value}>
-            <Mark
-              data-index={index}
-              {...markProps}
-              {...(!isHostComponent(Mark) && {
-                ownerState: { ...ownerState, ...markProps.ownerState },
-                markActive,
-              })}
-              style={{ ...style, ...markProps.style }}
-              className={clsx(classes.mark, markProps.className, {
-                [classes.markActive]: markActive,
-              })}
-            />
-            {mark.label != null ? (
-              <MarkLabel
-                aria-hidden
+          return (
+            <React.Fragment key={mark.value}>
+              <Mark
                 data-index={index}
-                {...markLabelProps}
-                {...(!isHostComponent(MarkLabel) && {
-                  ownerState: {
-                    ...ownerState,
-                    ...markLabelProps.ownerState,
-                  },
+                {...markProps}
+                {...(!isHostComponent(Mark) && {
+                  markActive,
                 })}
-                markLabelActive={markActive}
-                style={{ ...style, ...markLabelProps.style }}
-                className={clsx(classes.markLabel, markLabelProps.className, {
-                  [classes.markLabelActive]: markActive,
+                style={{ ...style, ...markProps.style }}
+                className={clsx(classes.mark, markProps.className, {
+                  [classes.markActive]: markActive,
                 })}
-              >
-                {mark.label}
-              </MarkLabel>
-            ) : null}
-          </React.Fragment>
-        );
-      })}
-      {values.map((value, index) => {
-        const percent = valueToPercent(value, min, max);
-        const style = axisProps[axis].offset(percent);
-
-        const ValueLabelComponent = valueLabelDisplay === 'off' ? Forward : ValueLabel;
-
-        return (
-          <React.Fragment key={index}>
-            <ValueLabelComponent
-              valueLabelFormat={valueLabelFormat}
-              valueLabelDisplay={valueLabelDisplay}
-              value={
-                typeof valueLabelFormat === 'function'
-                  ? valueLabelFormat(scale(value), index)
-                  : valueLabelFormat
-              }
-              index={index}
-              open={open === index || active === index || valueLabelDisplay === 'on'}
-              disabled={disabled}
-              {...valueLabelProps}
-              className={clsx(classes.valueLabel, valueLabelProps.className)}
-              {...(!isHostComponent(ValueLabel) && {
-                ownerState: { ...ownerState, ...valueLabelProps.ownerState },
-              })}
-            >
-              <Thumb
-                data-index={index}
-                onMouseOver={handleMouseOver}
-                onMouseLeave={handleMouseLeave}
-                {...thumbProps}
-                className={clsx(classes.thumb, thumbProps.className, {
-                  [classes.active]: active === index,
-                  [classes.focusVisible]: focusVisible === index,
-                })}
-                {...(!isHostComponent(Thumb) && {
-                  ownerState: { ...ownerState, ...thumbProps.ownerState },
-                })}
-                style={{
-                  ...style,
-                  pointerEvents: disableSwap && active !== index ? 'none' : undefined,
-                  ...thumbProps.style,
-                }}
-              >
-                <input
-                  tabIndex={tabIndex}
+              />
+              {mark.label != null ? (
+                <MarkLabel
+                  aria-hidden
                   data-index={index}
-                  aria-label={getAriaLabel ? getAriaLabel(index) : ariaLabel}
-                  aria-labelledby={ariaLabelledby}
-                  aria-orientation={orientation}
-                  aria-valuemax={scale(max)}
-                  aria-valuemin={scale(min)}
-                  aria-valuenow={scale(value)}
-                  aria-valuetext={
-                    getAriaValueText ? getAriaValueText(scale(value), index) : ariaValuetext
-                  }
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  name={name}
-                  type="range"
-                  min={props.min}
-                  max={props.max}
-                  step={props.step}
-                  disabled={disabled}
-                  value={values[index]}
-                  onChange={handleHiddenInputChange}
+                  {...markLabelProps}
+                  markLabelActive={markActive}
+                  style={{ ...style, ...markLabelProps.style }}
+                  className={clsx(classes.markLabel, markLabelProps.className, {
+                    [classes.markLabelActive]: markActive,
+                  })}
+                >
+                  {mark.label}
+                </MarkLabel>
+              ) : null}
+            </React.Fragment>
+          );
+        })}
+        {values.map((value, index) => {
+          const percent = valueToPercent(value, min, max);
+          const style = axisProps[axis].offset(percent);
+
+          const ValueLabelComponent = valueLabelDisplay === 'off' ? Forward : ValueLabel;
+
+          return (
+            <React.Fragment key={index}>
+              <ValueLabelComponent
+                valueLabelFormat={valueLabelFormat}
+                valueLabelDisplay={valueLabelDisplay}
+                value={
+                  typeof valueLabelFormat === 'function'
+                    ? valueLabelFormat(scale(value), index)
+                    : valueLabelFormat
+                }
+                index={index}
+                open={open === index || active === index || valueLabelDisplay === 'on'}
+                disabled={disabled}
+                {...valueLabelProps}
+                className={clsx(classes.valueLabel, valueLabelProps.className)}
+              >
+                <Thumb
+                  data-index={index}
+                  onMouseOver={handleMouseOver}
+                  onMouseLeave={handleMouseLeave}
+                  {...thumbProps}
+                  className={clsx(classes.thumb, thumbProps.className, {
+                    [classes.active]: active === index,
+                    [classes.focusVisible]: focusVisible === index,
+                  })}
                   style={{
-                    ...visuallyHidden,
-                    direction: isRtl ? 'rtl' : 'ltr',
-                    // So that VoiceOver's focus indicator matches the thumb's dimensions
-                    width: '100%',
-                    height: '100%',
+                    ...style,
+                    pointerEvents: disableSwap && active !== index ? 'none' : undefined,
+                    ...thumbProps.style,
                   }}
-                />
-              </Thumb>
-            </ValueLabelComponent>
-          </React.Fragment>
-        );
-      })}
-    </Root>
+                >
+                  <input
+                    tabIndex={tabIndex}
+                    data-index={index}
+                    aria-label={getAriaLabel ? getAriaLabel(index) : ariaLabel}
+                    aria-labelledby={ariaLabelledby}
+                    aria-orientation={orientation}
+                    aria-valuemax={scale(max)}
+                    aria-valuemin={scale(min)}
+                    aria-valuenow={scale(value)}
+                    aria-valuetext={
+                      getAriaValueText ? getAriaValueText(scale(value), index) : ariaValuetext
+                    }
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    name={name}
+                    type="range"
+                    min={props.min}
+                    max={props.max}
+                    step={props.step}
+                    disabled={disabled}
+                    value={values[index]}
+                    onChange={handleHiddenInputChange}
+                    style={{
+                      ...visuallyHidden,
+                      direction: isRtl ? 'rtl' : 'ltr',
+                      // So that VoiceOver's focus indicator matches the thumb's dimensions
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  />
+                </Thumb>
+              </ValueLabelComponent>
+            </React.Fragment>
+          );
+        })}
+      </Root>
+    </SliderContext.Provider>
   );
 });
 
