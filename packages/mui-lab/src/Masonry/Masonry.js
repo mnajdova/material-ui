@@ -186,7 +186,6 @@ const Masonry = React.forwardRef(function Masonry(inProps, ref) {
     typeof ResizeObserver === 'undefined'
       ? undefined
       : new ResizeObserver((elements) => {
-          console.log(elements);
           const masonry = elements[0];
           const masonryFirstChild = elements[1];
           if (!masonryFirstChild) {
