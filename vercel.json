@@ -2,7 +2,6 @@
   "github": {
     "enabled": true,
     "autoJobCancelation": false,
-    "silent": true
   },
   "public": true,
   "trailingSlash": true
