@@ -7,8 +7,8 @@
   "trailingSlash": true,
   "rewrites": [
     {
-      "source": "/store/*",
-      "destination": "https://material-ui-store.netlify.app/:splat"
+      "source": "/store/:path*",
+      "destination": "https://material-ui-store.netlify.app/:path*"
     }
   ]
 }
