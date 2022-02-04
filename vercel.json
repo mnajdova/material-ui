@@ -4,5 +4,11 @@
     "autoJobCancelation": false
   },
   "public": true,
-  "trailingSlash": true
+  "trailingSlash": true,
+  "rewrites": [
+    {
+      "source": "/store/*",
+      "destination": "https://material-ui-store.netlify.app/:splat"
+    }
+  ]
 }
