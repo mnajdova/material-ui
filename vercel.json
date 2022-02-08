@@ -8,7 +8,7 @@
   "rewrites": [
     {
       "source": "/store/:path*{/}?",
-      "destination": "https://material-ui-store.netlify.app/:path*{/}?"
+      "destination": "https://material-ui-store.netlify.app/:path*"
     }
   ]
 }
