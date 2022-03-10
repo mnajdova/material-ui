@@ -192,7 +192,7 @@ type CommandOptions = { grep?: string };
 async function run(argv: CommandOptions) {
   const grep = argv.grep == null ? null : new RegExp(argv.grep);
   let allBuilds: Array<PromiseSettledResult<ReactApi | null>> = [];
-  await ACTIVE_SETTINGS.reduce(async (resolvedPromise, setting) => {
+  await MIGRATION_SETTINGS.reduce(async (resolvedPromise, setting) => {
     await resolvedPromise;
     const workspaceRoot = path.resolve(__dirname, '../../');
     /**
@@ -200,10 +200,15 @@ async function run(argv: CommandOptions) {
      */
     const componentDirectories = setting.input.libDirectory;
     const apiPagesManifestPath = setting.output.apiManifestPath;
-
-    const manifestDir = apiPagesManifestPath.match(/(.*)\/[^/]+\./)?.[1];
+    console.log(apiPagesManifestPath);
+    const manifestDir = apiPagesManifestPath.match(/(.*)(\/|\\)[^(/|\\)]+\./)?.[1];
+    console.log(manifestDir);
     if (manifestDir) {
-      mkdirSync(manifestDir, { recursive: true });
+      const success = mkdirSync(manifestDir, { recursive: true });
+      if(!success) {
+        console.log("------------------------------------------------");
+        mkdirSync(manifestDir.replace('/', '\\'), { recursive: true });
+      }
     }
 
     /**

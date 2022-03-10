@@ -29,7 +29,7 @@ function getUtilityClasses(ownerState: MenuUnstyledOwnerState) {
  *
  * Demos:
  *
- * - [Menus](https://mui.com/components/menus/)
+ * - [Mui](https://mui.comD:/workspace/mui/)
  *
  * API:
  *

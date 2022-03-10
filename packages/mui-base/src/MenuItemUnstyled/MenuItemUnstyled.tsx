@@ -21,7 +21,7 @@ function getUtilityClasses(ownerState: MenuItemOwnerState) {
  *
  * Demos:
  *
- * - [Menus](https://mui.com/components/menus/)
+ * - [Mui](https://mui.comD:/workspace/mui/)
  *
  * API:
  *

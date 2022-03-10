@@ -146,11 +146,22 @@ function findNewComponentDemos(
   const filteredMarkdowns = pagesMarkdown
     .filter((page) => page.components.includes(componentName))
     .map((page) => page.pathname);
-  return Array.from(new Set(filteredMarkdowns)) // get unique filenames
+
+  // if(componentName.toLowerCase().indexOf('menu') > -1) {
+  //   console.log(filteredMarkdowns);
+  // }
+
+  const result = Array.from(new Set(filteredMarkdowns)) // get unique filenames
     .map((pathname) => ({
       name: pageToTitle({ pathname }) || '',
       demoPathname: replaceComponentLinks(`${pathname.replace(/^\/material/, '')}/`),
     }));
+
+  // if(componentName.toLowerCase().indexOf('menu') > -1) {
+  //   console.log(result);
+  // }
+  return result;
+  
 }
 
 export const getMaterialComponentInfo = (filename: string): ComponentInfo => {
