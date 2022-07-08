@@ -6,7 +6,7 @@ import { unstable_composeClasses as composeClasses } from '@mui/base';
 import { HTMLElementType } from '@mui/utils';
 import MenuList from '../MenuList';
 import Paper from '../Paper';
-import Popover from '../Popover';
+import Popper from '../Popper';
 import styled, { rootShouldForwardProp } from '../styles/styled';
 import useTheme from '../styles/useTheme';
 import useThemeProps from '../styles/useThemeProps';
@@ -34,12 +34,15 @@ const useUtilityClasses = (ownerState) => {
   return composeClasses(slots, getMenuUtilityClass, classes);
 };
 
-const MenuRoot = styled(Popover, {
+// Add components & componentsProps to be able to change this
+const MenuRoot = styled(Popper, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === 'classes',
   name: 'MuiMenu',
   slot: 'Root',
   overridesResolver: (props, styles) => styles.root,
-})({});
+})(({ theme }) => ({
+  background: theme.palette.background.paper,
+}));
 
 const MenuPaper = styled(Paper, {
   name: 'MuiMenu',
@@ -157,13 +160,14 @@ const Menu = React.forwardRef(function Menu(inProps, ref) {
   });
 
   return (
+    // We would need a wrapper component on userland to handle the different props, shrug
     <MenuRoot
       classes={PopoverClasses}
-      onClose={onClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: isRtl ? 'right' : 'left',
-      }}
+      // Oops the Select depends on the onClose prop
+      // onClose={onClose}
+      disablePortal={true}
+      placement={'bottom-start'}
+      role={undefined}
       transformOrigin={isRtl ? RTL_ORIGIN : LTR_ORIGIN}
       PaperProps={{
         component: MenuPaper,
@@ -176,8 +180,8 @@ const Menu = React.forwardRef(function Menu(inProps, ref) {
       className={classes.root}
       open={open}
       ref={ref}
-      transitionDuration={transitionDuration}
-      TransitionProps={{ onEntering: handleEntering, ...TransitionProps }}
+      // transitionDuration={transitionDuration}
+      // TransitionProps={{ onEntering: handleEntering, ...TransitionProps }}
       ownerState={ownerState}
       {...other}
     >
