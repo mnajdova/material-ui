@@ -13,6 +13,7 @@ import { useTranslate, useUserLanguage } from 'docs/src/modules/utils/i18n';
 import BrandingProvider from 'docs/src/BrandingProvider';
 import Ad from 'docs/src/modules/components/Ad';
 import AdGuest from 'docs/src/modules/components/AdGuest';
+import ComponentTabs from 'docs/src/modules/components/ComponentTabs';
 
 function noComponent(moduleID) {
   return function NoComponent() {
@@ -76,9 +77,12 @@ export default function MarkdownDocs(props) {
         {rendered.map((renderedMarkdownOrDemo, index) => {
           if (typeof renderedMarkdownOrDemo === 'string') {
             return (
-              <Wrapper key={index} {...(isJoy && { mode: theme.palette.mode })}>
-                <MarkdownElement renderedMarkdown={renderedMarkdownOrDemo} />
-              </Wrapper>
+              <>
+                {index === 2 && <ComponentTabs hook />}
+                <Wrapper key={index} {...(isJoy && { mode: theme.palette.mode })}>
+                  <MarkdownElement renderedMarkdown={renderedMarkdownOrDemo} />
+                </Wrapper>
+              </>
             );
           }
 
@@ -91,9 +95,12 @@ export default function MarkdownDocs(props) {
             }
 
             return (
-              <Wrapper key={index} {...(isJoy && { mode: theme.palette.mode })}>
-                <Component {...renderedMarkdownOrDemo} markdown={localizedDoc} />
-              </Wrapper>
+              <>
+                {index === 2 && <ComponentTabs hook />}
+                <Wrapper key={index} {...(isJoy && { mode: theme.palette.mode })}>
+                  <Component {...renderedMarkdownOrDemo} markdown={localizedDoc} />
+                </Wrapper>
+              </>
             );
           }
 
@@ -131,21 +138,24 @@ export default function MarkdownDocs(props) {
           const fileNameWithLocation = `${splitLocationBySlash.join('/')}/${name}`;
 
           return (
-            <Demo
-              key={index}
-              mode={theme.palette.mode}
-              demo={{
-                raw: demo.raw,
-                js: demoComponents[demo.module] ?? noComponent(demo.module),
-                scope: demos.scope,
-                jsxPreview: demo.jsxPreview,
-                rawTS: demo.rawTS,
-                tsx: demoComponents[demo.moduleTS] ?? null,
-              }}
-              disableAd={disableAd}
-              demoOptions={renderedMarkdownOrDemo}
-              githubLocation={`${process.env.SOURCE_CODE_REPO}/blob/v${process.env.LIB_VERSION}${fileNameWithLocation}`}
-            />
+            <>
+              {index === 2 && <ComponentTabs hook />}
+              <Demo
+                key={index}
+                mode={theme.palette.mode}
+                demo={{
+                  raw: demo.raw,
+                  js: demoComponents[demo.module] ?? noComponent(demo.module),
+                  scope: demos.scope,
+                  jsxPreview: demo.jsxPreview,
+                  rawTS: demo.rawTS,
+                  tsx: demoComponents[demo.moduleTS] ?? null,
+                }}
+                disableAd={disableAd}
+                demoOptions={renderedMarkdownOrDemo}
+                githubLocation={`${process.env.SOURCE_CODE_REPO}/blob/v${process.env.LIB_VERSION}${fileNameWithLocation}`}
+              />
+            </>
           );
         })}
       </Provider>
