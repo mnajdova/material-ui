@@ -1,6 +1,9 @@
 export { default as Button } from './Button';
 export * from './Button';
 
+export { default as Switch } from './Switch';
+export * from './Switch';
+
 export { default as Input } from './Input';
 
 export { default as Tabs } from './Tabs';

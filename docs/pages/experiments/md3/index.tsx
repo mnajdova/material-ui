@@ -8,6 +8,7 @@ import { unstable_capitalize as capitalize } from '@mui/utils';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Button, { ButtonProps } from '@mui/material-next/Button';
+import Switch from '@mui/material-next/Switch';
 import { CssVarsProvider, useColorScheme, extendTheme } from '@mui/material-next/styles';
 import DarkIcon from '@mui/icons-material/DarkModeOutlined';
 import LightIcon from '@mui/icons-material/LightModeOutlined';
@@ -347,6 +348,7 @@ export default function App() {
       <Stack sx={{ p: 1 }} alignItems="flex-start">
         <ModeSwitcher />
         <DemoComponents />
+        <Switch checked />
       </Stack>
     </CssVarsProvider>
   );
