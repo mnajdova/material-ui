@@ -1,6 +1,7 @@
+"use client";
 import * as React from 'react';
 import Image from 'next/image';
-import { styled } from '@mui/zero-runtime';
+import { styled } from '@mui/material/styles';
 import Link from 'next/link';
 import styles from './page.module.css';
 import Grid from '../components/Grid';
@@ -14,7 +15,7 @@ export const Main = styled('main')({
   minHeight: '100vh',
 });
 
-const Description = styled.div(({ theme }: any) => ({
+const Description = styled('div')(({ theme }) => ({
   display: 'inherit',
   justifyContent: 'inherit',
   alignItems: 'inherit',
@@ -73,12 +74,12 @@ const Description = styled.div(({ theme }: any) => ({
   },
 }));
 
-const Code = styled('code')(({ theme }: any) => ({
+const Code = styled('code')(({ theme }) => ({
   fontWeight: 700,
   fontFamily: theme.typography.fontFamilyCode,
 }));
 
-const Card = styled('a')(({ theme }: any) => ({
+const Card = styled('a')(({ theme }) => ({
   padding: '1rem 1.2rem',
   borderRadius: 'var(--border-radius)',
   background: 'rgba(var(--card-rgb), 0)',
