@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
-import { styled } from '@mui/zero-runtime';
-import Slider from './Slider/ZeroSlider';
+import { styled } from '@mui/material/styles';
+import Slider from '@mui/material/Slider';
 import { HalfWidth } from './Grid';
 
 const Button = styled('button', {
@@ -9,14 +9,12 @@ const Button = styled('button', {
   slot: 'Root',
 })(
   'color:red',
-  ({ theme }: any) => ({
+  ({ theme }) => ({
     fontFamily: 'sans-serif',
     backgroundColor: [theme.palette.primary.main, 'text.primary', 'background.paper'],
   }),
   {
     fontFamily: 'sans-serif',
-    // p: (props: any) => (props.isRed ? 10 : 20),
-    color: (props: any) => (props.isRed ? 'primary.main' : 'secondary.main'),
   },
 );
 
@@ -125,13 +123,13 @@ export default function SliderWrapper() {
               max={100}
               valueLabelDisplay="auto"
               orientation={isHorizontal ? 'horizontal' : 'vertical'}
-              size={size as 'small' | 'medium'}
+              size={size}
               color={isColorPrimary ? 'primary' : 'secondary'}
               track={isTrackInverted ? 'inverted' : 'normal'}
               disabled={disabled}
               value={value}
               // @ts-ignore
-              onChange={(ev, val) => setValue(val as number)}
+              onChange={(ev, val) => setValue(val)}
             />
           ))}
         </HalfWidth>

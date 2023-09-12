@@ -15,7 +15,8 @@ export default function RootLayout({ children }) {
       <body>
         <ThemeRegistry>
           <CssVarsProvider>
-            <GlobalStyles styles={`
+            <GlobalStyles
+              styles={`
             /* @import '~@mui/zero-runtime/styles.css'; */
 
             :root {
@@ -119,7 +120,8 @@ export default function RootLayout({ children }) {
               }
             }
             
-            `} />
+            `}
+            />
             {children}
           </CssVarsProvider>
         </ThemeRegistry>
@@ -127,6 +129,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
-
-
