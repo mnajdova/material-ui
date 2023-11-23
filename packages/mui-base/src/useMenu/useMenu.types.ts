@@ -3,7 +3,10 @@ import { ListAction, ListState, UseListRootSlotProps } from '../useList';
 import { MenuItemMetadata } from '../useMenuItem';
 import { MenuProviderValue } from './MenuProvider';
 
-export interface UseMenuParameters {
+export interface UseMenuParameters<
+  ItemValue extends any = string,
+  State extends ListState<ItemValue> = ListState<ItemValue>
+> {
   /**
    * The id of the menu. If not provided, it will be generated.
    */
@@ -18,6 +21,14 @@ export interface UseMenuParameters {
    * @default false
    */
   disableListWrap?: boolean;
+  /**
+   * A function that intializes the state of the list.
+   * It is required when using a custom state with mandatory fields.
+   * If not provided, the state will be initialized with the default values (nothing highlighted or selected).
+   *
+   * @returns The initial state of the list.
+   */
+  getInitialState?: () => State;
   /**
    * Callback fired when the menu items change.
    */

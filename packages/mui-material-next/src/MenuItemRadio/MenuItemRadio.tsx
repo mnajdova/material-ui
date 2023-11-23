@@ -10,7 +10,7 @@ import {
 } from '@mui/utils';
 import { useSlotProps } from '@mui/base/utils';
 import { unstable_composeClasses as composeClasses } from '@mui/base/composeClasses';
-import { useMenuItem } from '@mui/base/useMenuItem';
+import { useMenuItemRadio } from '@mui/base/useMenuItemRadio';
 // TODO v6: Replace with @mui/material-next when the List components are available
 import ListContext from '@mui/material/List/ListContext';
 import { listItemIconClasses } from '@mui/material/ListItemIcon';
@@ -18,11 +18,11 @@ import { listItemTextClasses } from '@mui/material/ListItemText';
 import { styled, useThemeProps, rootShouldForwardProp } from '../styles';
 import ButtonBase from '../ButtonBase';
 import { dividerClasses } from '../Divider';
-import { MenuItemProps, MenuItemOwnerState, MenuItemTypeMap } from './MenuItem.types';
-import menuItemClasses, { getMenuItemUtilityClass } from './menuItemClasses';
+import { MenuItemRadioProps, MenuItemRadioOwnerState, MenuItemRadioTypeMap } from './MenuItemRadio.types';
+import menuItemClasses, { getMenuItemRadioUtilityClass } from './menuItemRadioClasses';
 
 const overridesResolver = (
-  props: MenuItemProps & { ownerState: MenuItemOwnerState },
+  props: MenuItemRadioProps & { ownerState: MenuItemRadioOwnerState },
   styles: any,
 ) => {
   const { ownerState } = props;
@@ -35,8 +35,8 @@ const overridesResolver = (
   ];
 };
 
-const useUtilityClasses = (ownerState: MenuItemOwnerState) => {
-  const { disabled, dense, divider, disableGutters, selected, classes } = ownerState;
+const useUtilityClasses = (ownerState: MenuItemRadioOwnerState) => {
+  const { disabled, dense, divider, disableGutters, checked, classes } = ownerState;
   const slots = {
     root: [
       'root',
@@ -44,11 +44,11 @@ const useUtilityClasses = (ownerState: MenuItemOwnerState) => {
       disabled && 'disabled',
       !disableGutters && 'gutters',
       divider && 'divider',
-      selected && 'selected',
+      checked && 'checked',
     ],
   };
 
-  const composedClasses = composeClasses(slots, getMenuItemUtilityClass, classes);
+  const composedClasses = composeClasses(slots, getMenuItemRadioUtilityClass, classes);
 
   return {
     ...classes,
@@ -56,12 +56,12 @@ const useUtilityClasses = (ownerState: MenuItemOwnerState) => {
   };
 };
 
-const MenuItemRoot = styled(ButtonBase, {
+const MenuItemRadioRoot = styled(ButtonBase, {
   shouldForwardProp: (prop: string) => rootShouldForwardProp(prop) || prop === 'classes',
-  name: 'MuiMenuItem',
+  name: 'MuiMenuItemRadio',
   slot: 'Root',
   overridesResolver,
-})<{ ownerState: MenuItemOwnerState }>(({ theme, ownerState }) => ({
+})<{ ownerState: MenuItemRadioOwnerState }>(({ theme, ownerState }) => ({
   ...theme.typography.body1,
   display: 'flex',
   justifyContent: 'flex-start',
@@ -89,7 +89,7 @@ const MenuItemRoot = styled(ButtonBase, {
       backgroundColor: 'transparent',
     },
   },
-  [`&.${menuItemClasses.selected}`]: {
+  [`&.${menuItemClasses.checked}`]: {
     backgroundColor: theme.vars
       ? `rgba(${theme.vars.palette.primary.mainChannel} / ${theme.vars.palette.action.selectedOpacity})`
       : alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
@@ -102,7 +102,7 @@ const MenuItemRoot = styled(ButtonBase, {
           ),
     },
   },
-  [`&.${menuItemClasses.selected}:hover`]: {
+  [`&.${menuItemClasses.checked}:hover`]: {
     backgroundColor: theme.vars
       ? `rgba(${theme.vars.palette.primary.mainChannel} / calc(${theme.vars.palette.action.selectedOpacity} + ${theme.vars.palette.action.hoverOpacity}))`
       : alpha(
@@ -155,11 +155,11 @@ const MenuItemRoot = styled(ButtonBase, {
   }),
 }));
 
-const MenuItem = React.forwardRef(function MenuItem<RootComponentType extends React.ElementType>(
-  inProps: MenuItemProps<RootComponentType>,
+const MenuItemRadio = React.forwardRef(function MenuItemRadio<RootComponentType extends React.ElementType>(
+  inProps: MenuItemRadioProps<RootComponentType>,
   ref: React.ForwardedRef<Element>,
 ) {
-  const props = useThemeProps({ props: inProps, name: 'MuiMenuItem' });
+  const props = useThemeProps({ props: inProps, name: 'MuiMenuItemRadio' });
   const {
     autoFocus = false,
     component = 'li',
@@ -168,7 +168,7 @@ const MenuItem = React.forwardRef(function MenuItem<RootComponentType extends Re
     disableGutters = false,
     focusVisibleClassName,
     role = 'menuitem',
-    tabIndex: tabIndexProp,
+    checked: checkedProp,
     className,
     disabled: disabledProp,
     label: labelProp,
@@ -187,8 +187,9 @@ const MenuItem = React.forwardRef(function MenuItem<RootComponentType extends Re
   const menuItemRef = React.useRef<HTMLElement | null>(null);
   const handleRef = useForkRef(menuItemRef, ref);
 
-  const { getRootProps, disabled, focusVisible, highlighted } = useMenuItem({
+  const { getRootProps, disabled, focusVisible, highlighted } = useMenuItemRadio({
     disabled: disabledProp,
+    checked: checkedProp,
     rootRef: handleRef,
     label: labelProp,
   });
@@ -199,7 +200,7 @@ const MenuItem = React.forwardRef(function MenuItem<RootComponentType extends Re
         menuItemRef.current.focus();
       } else if (process.env.NODE_ENV !== 'production') {
         console.error(
-          'MUI: Unable to set focus to a MenuItem whose component has not been rendered.',
+          'MUI: Unable to set focus to a MenuItemRadio whose component has not been rendered.',
         );
       }
     }
@@ -217,12 +218,7 @@ const MenuItem = React.forwardRef(function MenuItem<RootComponentType extends Re
 
   const classes = useUtilityClasses(props);
 
-  let tabIndex;
-  if (!props.disabled) {
-    tabIndex = tabIndexProp !== undefined ? tabIndexProp : -1;
-  }
-
-  const Root = /* slots.root ?? */ MenuItemRoot;
+  const Root = /* slots.root ?? */ MenuItemRadioRoot;
   const rootProps = useSlotProps({
     elementType: Root,
     getSlotProps: getRootProps,
@@ -231,7 +227,6 @@ const MenuItem = React.forwardRef(function MenuItem<RootComponentType extends Re
     externalForwardedProps: other,
     additionalProps: {
       role,
-      tabIndex,
       component,
       focusVisibleClassName: clsx(classes.focusVisible, focusVisibleClassName),
       classes,
@@ -241,12 +236,12 @@ const MenuItem = React.forwardRef(function MenuItem<RootComponentType extends Re
   });
   return (
     <ListContext.Provider value={childContext}>
-      <MenuItemRoot {...rootProps} />
+      <MenuItemRadioRoot {...rootProps} />
     </ListContext.Provider>
   );
-}) as OverridableComponent<MenuItemTypeMap>;
+}) as OverridableComponent<MenuItemRadioTypeMap>;
 
-MenuItem.propTypes /* remove-proptypes */ = {
+MenuItemRadio.propTypes /* remove-proptypes */ = {
   // ----------------------------- Warning --------------------------------
   // | These PropTypes are generated from the TypeScript type definitions |
   // |     To update them edit TypeScript types and run "yarn proptypes"  |
@@ -313,10 +308,10 @@ MenuItem.propTypes /* remove-proptypes */ = {
    */
   role: PropTypes /* @typescript-to-proptypes-ignore */.string,
   /**
-   * If `true`, the component is selected.
+   * If `true`, the component is checked.
    * @default false
    */
-  selected: PropTypes.bool,
+  checked: PropTypes.bool,
   /**
    * The system prop that allows defining system overrides as well as additional CSS styles.
    */
@@ -325,10 +320,6 @@ MenuItem.propTypes /* remove-proptypes */ = {
     PropTypes.func,
     PropTypes.object,
   ]),
-  /**
-   * @default 0
-   */
-  tabIndex: PropTypes.number,
 } as any;
 
-export default MenuItem;
+export default MenuItemRadio;

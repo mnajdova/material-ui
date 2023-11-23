@@ -41,6 +41,9 @@ export * from './Menu';
 export { default as MenuItem } from './MenuItem';
 export * from './MenuItem';
 
+export { default as MenuItemRadio } from './MenuItemRadio';
+export * from './MenuItemRadio';
+
 export { default as OutlinedInput } from './OutlinedInput';
 export * from './OutlinedInput';
 

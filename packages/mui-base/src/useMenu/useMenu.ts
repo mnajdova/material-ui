@@ -43,6 +43,10 @@ export function useMenu(parameters: UseMenuParameters = {}): UseMenuReturnValue 
     id: idParam,
     disabledItemsFocusable = true,
     disableListWrap = false,
+    getInitialState = () => ({
+      selectedValues: [],
+      highlightedValue: null,
+    }),
     // autoFocus = true,
   } = parameters;
 
@@ -96,17 +100,14 @@ export function useMenu(parameters: UseMenuParameters = {}): UseMenuReturnValue 
     dispatch: listDispatch,
     getRootProps: getListRootProps,
     contextValue: listContextValue,
-    state: { highlightedValue },
+    state: { highlightedValue, selectedValues },
     rootRef: mergedListRef,
   } = useList({
     disabledItemsFocusable,
     disableListWrap,
     focusManagement: 'DOM',
     getItemDomElement,
-    getInitialState: () => ({
-      selectedValues: [],
-      highlightedValue: null,
-    }),
+    getInitialState,
     isItemDisabled,
     items: subitemKeys,
     getItemAsString,
@@ -122,11 +123,13 @@ export function useMenu(parameters: UseMenuParameters = {}): UseMenuReturnValue 
   }, [listboxId, registerPopup]);
 
   React.useEffect(() => {
-    if (open && highlightedValue === subitemKeys[0] && !isInitiallyOpen.current) {
+    console.log(selectedValues)
+    const itemToFocus = selectedValues.length > 0 ? selectedValues[selectedValues.length - 1] : highlightedValue;
+    if (open && itemToFocus && !isInitiallyOpen.current) {
       // TODO v6: focus only if autoFocus is true
-      subitems.get(subitemKeys[0])?.ref?.current?.focus();
+      subitems.get(itemToFocus)?.ref?.current?.focus();
     }
-  }, [open, highlightedValue, subitems, subitemKeys]);
+  }, [open, highlightedValue, selectedValues, subitems, subitemKeys]);
 
   React.useEffect(() => {
     // set focus to the highlighted item (but prevent stealing focus from other elements on the page)

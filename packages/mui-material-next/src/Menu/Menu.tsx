@@ -111,10 +111,42 @@ const MenuInner = React.forwardRef(function Menu(inProps, ref) {
     ...otherMenuListProps
   } = MenuListProps;
 
+  // // The index of the selected item
+  // let selectedIndex = -1;
+  // let selectedValue: string | null = null;
+  // // since we inject focus related props into children we have to do a lookahead
+  // // to check if there is a `selected` item. We're looking for the last `selected`
+  // // item and use the first valid item as a fallback
+  // React.Children.map(children, (child, index) => {
+  //   if (!React.isValidElement(child)) {
+  //     return;
+  //   }
+  //   if (process.env.NODE_ENV !== 'production') {
+  //     if (isFragment(child)) {
+  //       console.error(
+  //         [
+  //           "MUI: The Menu component doesn't accept a Fragment as a child.",
+  //           'Consider providing an array instead.',
+  //         ].join('\n'),
+  //       );
+  //     }
+  //   }
+  //   if (!child.props.disabled) {
+  //     if (variant === 'selectedMenu' && child.props.checked) {
+  //       selectedIndex = index;
+  //       selectedValue = child.props.id;
+  //     }
+  //   }
+  // });
+
   const { contextValue, getListboxProps, dispatch, open, triggerElement } = useMenu({
     // onItemsChange,
     disabledItemsFocusable: Boolean(disabledItemsFocusable),
     disableListWrap: Boolean(disableListWrap),
+    // getInitialState: () => ({
+    //   selectedValues: [selectedValue],
+    //   highlightedValue: null,
+    // }),
     // autoFocus,
   });
 
@@ -175,39 +207,6 @@ const MenuInner = React.forwardRef(function Menu(inProps, ref) {
     }
   };
 
-  /**
-   * the index of the item should receive focus
-   * in a `variant="selectedMenu"` it's the first `selected` item
-   * otherwise it's the very first item.
-   */
-  let activeItemIndex = -1;
-  // since we inject focus related props into children we have to do a lookahead
-  // to check if there is a `selected` item. We're looking for the last `selected`
-  // item and use the first valid item as a fallback
-  React.Children.map(children, (child, index) => {
-    if (!React.isValidElement(child)) {
-      return;
-    }
-
-    if (process.env.NODE_ENV !== 'production') {
-      if (isFragment(child)) {
-        console.error(
-          [
-            "MUI: The Menu component doesn't accept a Fragment as a child.",
-            'Consider providing an array instead.',
-          ].join('\n'),
-        );
-      }
-    }
-
-    if (!child.props.disabled) {
-      if (variant === 'selectedMenu' && child.props.selected) {
-        activeItemIndex = index;
-      } else if (activeItemIndex === -1) {
-        activeItemIndex = index;
-      }
-    }
-  });
 
   const PaperSlot = slots.paper ?? MenuPaper;
   const paperExternalSlotProps = slotProps.paper ?? PaperProps;

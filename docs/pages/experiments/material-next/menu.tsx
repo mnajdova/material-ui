@@ -5,6 +5,7 @@ import Divider from '@mui/material/Divider';
 import { useDropdown, DropdownContext } from '@mui/base/useDropdown';
 import Menu, { MenuProps } from '@mui/material-next/Menu';
 import MenuItem from '@mui/material-next/MenuItem';
+import MenuItemRadio from '@mui/material-next/MenuItemRadio';
 import StableMenu from '@mui/material/Menu';
 import StableMenuItem from '@mui/material/MenuItem';
 import StableList from '@mui/material/List';
@@ -152,14 +153,14 @@ const selectedMenuOptions = [
 
 function SelectedMenuLegacy() {
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  // const [selectedIndex, setSelectedIndex] = React.useState(1);
   const open = Boolean(anchorEl);
   const handleClickListItem = (event: React.MouseEvent) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuItemClick = (event: React.MouseEvent, index: number) => {
-    setSelectedIndex(index);
+    // setSelectedIndex(index);
     setAnchorEl(null);
   };
 
@@ -181,7 +182,7 @@ function SelectedMenuLegacy() {
         >
           <StableListItemText
             primary="When device is locked"
-            secondary={selectedMenuOptions[selectedIndex]}
+            // secondary={selectedMenuOptions[selectedIndex]}
           />
         </StableListItem>
       </StableList>
@@ -196,14 +197,16 @@ function SelectedMenuLegacy() {
         }}
       >
         {selectedMenuOptions.map((option, index) => (
-          <MenuItem
+          <MenuItemRadio
             key={option}
             disabled={index === 0}
-            selected={index === selectedIndex}
+            // aria-checked={index === selectedIndex}
+            // checked={index === selectedIndex}
+            // selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >
             {option}
-          </MenuItem>
+          </MenuItemRadio>
         ))}
       </Menu>
     </div>
@@ -300,6 +303,7 @@ function SelectedMenuStable() {
           <StableMenuItem
             key={option}
             disabled={index === 0}
+            aria-checked={index === selectedIndex}
             selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >
@@ -314,18 +318,18 @@ function SelectedMenuStable() {
 export default function BasicMenu() {
   return (
     <ThemeProvider theme={theme}>
-      <LegacyUsage />
+      {/* <LegacyUsage />
       <DropdownUsage />
       <StableComponentUsage />
       <h4>Disabled item focusable</h4>
       <LegacyUsage MenuListProps={{ disabledItemsFocusable: true }} />
       <DropdownUsage MenuListProps={{ disabledItemsFocusable: true }} />
-      <StableComponentUsage MenuListProps={{ disabledItemsFocusable: true }} />
+      <StableComponentUsage MenuListProps={{ disabledItemsFocusable: true }} /> */}
       {/* This is not working at this point */}
-      <h4>Auto focus false</h4>
+      {/* <h4>Auto focus false</h4>
       <LegacyUsage autoFocus={false} />
       <DropdownUsage autoFocus={false} />
-      <StableComponentUsage autoFocus={false} />
+      <StableComponentUsage autoFocus={false} /> */}
       {/* This is not working at this point */}
       <h4>Varaiant selectedMenu</h4>
       <div>Legacy</div>

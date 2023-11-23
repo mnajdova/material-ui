@@ -31,6 +31,20 @@ export function menuReducer(
         open: false,
       };
     }
+    if (action.event.key === 'Enter' || action.event.key === ' ') {
+      return {
+        ...newState,
+        open: false,
+      };
+    }
+  }
+
+  if (action.type === ListActionTypes.itemClick) {
+    return {
+      ...newState,
+      open: false,
+      selectedValues: [action.item],
+    };
   }
 
   if (action.type === ListActionTypes.blur) {

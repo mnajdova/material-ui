@@ -45,11 +45,13 @@ const Menu = React.forwardRef(function Menu<RootComponentType extends React.Elem
     onItemsChange,
     slotProps = {},
     slots = {},
+    disabledItemsFocusable = true,
     ...other
   } = props;
 
   const { contextValue, getListboxProps, dispatch, open, triggerElement } = useMenu({
     onItemsChange,
+    disabledItemsFocusable,
   });
 
   const anchor = anchorProp ?? triggerElement;

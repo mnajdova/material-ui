@@ -37,6 +37,7 @@ export * from './useInput';
 export * from './useMenu';
 export * from './useMenuButton';
 export * from './useMenuItem';
+export * from './useMenuItemRadio';
 export * from './unstable_useNumberInput';
 export * from './useOption';
 export * from './useSelect';
