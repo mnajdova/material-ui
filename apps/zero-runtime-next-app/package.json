@@ -9,6 +9,8 @@
     "clean": "rimraf .next"
   },
   "dependencies": {
+    "@mui/base": "workspace:^",
+    "@mui/material": "workspace:^",
     "@mui/zero-runtime": "workspace:^",
     "@mui/utils": "workspace:^",
     "@mui/base": "workspace:^",

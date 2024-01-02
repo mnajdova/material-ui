@@ -18,7 +18,7 @@ const Html = styled.html({
 
 const Body = styled.body({
   color: 'rgb(var(--foreground-rgb))',
-  background: `linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb))`,
+  // background: `linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb))`,
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
