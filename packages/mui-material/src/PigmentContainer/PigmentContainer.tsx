@@ -73,7 +73,7 @@ const useUtilityClasses = (ownerState: PigmentContainerOwnProps) => {
   return composeClasses(slots, (slot) => generateUtilityClass('MuiContainer', slot), classes);
 };
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Container](https://next.mui.com/material-ui/react-container/)

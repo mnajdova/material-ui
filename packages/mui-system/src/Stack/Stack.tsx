@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import createStack from './createStack';
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Stack (Joy UI)](https://mui.com/joy-ui/react-stack/)

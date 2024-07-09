@@ -110,6 +110,7 @@ const useUtilityClasses = (ownerState: {
   return composeClasses(slots, getHiddenCssUtilityClass, classes);
 };
 
+// @ignore - internal component.
 function HiddenCss(props: HiddenProps & { className?: string }) {
   const theme = useTheme();
   const { children, className, only, ...other } = props;

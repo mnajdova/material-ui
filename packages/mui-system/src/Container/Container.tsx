@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import createContainer from './createContainer';
 
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Container (Material UI)](https://mui.com/material-ui/react-container/)

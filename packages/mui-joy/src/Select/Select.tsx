@@ -311,7 +311,7 @@ const SelectIndicator = styled('span', {
   },
 }));
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Select](https://mui.com/joy-ui/react-select/)

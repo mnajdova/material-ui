@@ -8,6 +8,7 @@ import boxClasses from './boxClasses';
 
 const defaultTheme = createTheme();
 
+// @ignore - internal component.
 const Box = createBox({
   themeId: THEME_ID,
   defaultTheme,

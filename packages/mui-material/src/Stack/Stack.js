@@ -4,6 +4,7 @@ import { createStack } from '@mui/system';
 import styled from '../styles/styled';
 import useThemeProps from '../styles/useThemeProps';
 
+// @ignore - internal component.
 const Stack = createStack({
   createStyledComponent: styled('div', {
     name: 'MuiStack',

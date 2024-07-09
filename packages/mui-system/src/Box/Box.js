@@ -4,6 +4,7 @@ import ClassNameGenerator from '@mui/utils/ClassNameGenerator';
 import createBox from '../createBox';
 import boxClasses from './boxClasses';
 
+// @ignore - internal component.
 const Box = createBox({
   defaultClassName: boxClasses.root,
   generateClassName: ClassNameGenerator.generate,

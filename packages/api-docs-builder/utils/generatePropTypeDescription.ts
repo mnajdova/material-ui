@@ -33,11 +33,8 @@ export function getChained(type: PropTypeDescriptor) {
         }
         export default Foo
       `,
-        null,
-        null,
-        // helps react-docgen pickup babel.config.js
-        { filename: './' },
-      );
+       { filename: './' },
+      )[0];
       return {
         type: parsed.props.bar.type,
         required: parsed.props.bar.required,

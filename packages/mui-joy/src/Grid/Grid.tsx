@@ -5,7 +5,7 @@ import { OverridableComponent } from '@mui/types';
 import { styled, useThemeProps } from '../styles';
 import { GridTypeMap } from './GridProps';
 /**
- *
+ * // @ignore - internal component.
  * Demos:
  *
  * - [Grid](https://mui.com/joy-ui/react-grid/)

@@ -142,7 +142,7 @@ const useUtilityClasses = (ownerState: GridBaseProps) => {
   return composeClasses(slots, (slot: string) => generateUtilityClass('MuiGrid2', slot), {});
 };
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Grid version 2](https://next.mui.com/material-ui/react-grid2/)

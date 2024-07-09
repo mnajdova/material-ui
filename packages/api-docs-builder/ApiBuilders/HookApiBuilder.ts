@@ -480,21 +480,23 @@ export default async function generateHookApi(
 
   const reactApi: HookReactApi = docgenParse(
     src,
-    (ast) => {
-      let node;
-      astTypes.visit(ast, {
-        visitFunctionDeclaration: (functionPath) => {
-          if (functionPath.node?.id?.name === name) {
-            node = functionPath;
-          }
-          return false;
+    { 
+      resolver: (file) => {
+          let node;
+          file.traverse({
+            FunctionDeclaration: (functionPath) => {
+              if (functionPath.node?.id?.name === name) {
+                node = functionPath;
+              }
+              return false;
+            },
+          });
+          return [node];
         },
-      });
-      return node;
+      defaultHandlers,
+      filename
     },
-    defaultHandlers,
-    { filename },
-  );
+  )[0];
 
   const parameters = await extractInfoFromType(`${upperFirst(name)}Parameters`, project);
   const returnValue = await extractInfoFromType(`${upperFirst(name)}ReturnValue`, project);

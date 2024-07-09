@@ -5,6 +5,7 @@ import { GlobalStyles as SystemGlobalStyles } from '@mui/system';
 import defaultTheme from '../styles/defaultTheme';
 import THEME_ID from '../styles/identifier';
 
+// @ignore - internal component.
 function GlobalStyles(props) {
   return <SystemGlobalStyles {...props} defaultTheme={defaultTheme} themeId={THEME_ID} />;
 }

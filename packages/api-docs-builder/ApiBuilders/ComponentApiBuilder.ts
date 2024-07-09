@@ -479,7 +479,7 @@ const attachPropsTable = (
         return [] as any;
       }
 
-      const defaultValue = propDescriptor.jsdocDefaultValue?.value;
+      const defaultValue = propDescriptor.defaultValue?.value;
 
       const {
         signature: signatureType,
@@ -534,11 +534,11 @@ const attachPropsTable = (
         propName,
         {
           type: {
-            name: propDescriptor.type.name,
+            name: propDescriptor.type?.name,
             description:
-              propTypeDescription !== propDescriptor.type.name ? propTypeDescription : undefined,
+              propTypeDescription !== propDescriptor.type?.name ? propTypeDescription : undefined,
           },
-          default: defaultValue,
+          default: defaultValue + '',
           // undefined values are not serialized => saving some bytes
           required: requiredProp || undefined,
           deprecated: !!deprecation || undefined,
@@ -622,60 +622,58 @@ export default async function generateComponentApi(
   }
 
   const filename = componentInfo.filename;
-  let reactApi: ComponentReactApi;
+  let reactApi: Partial<ComponentReactApi>;
 
   if (componentInfo.isSystemComponent) {
     try {
       reactApi = docgenParse(
         src,
-        (ast) => {
-          let node;
-          astTypes.visit(ast, {
-            visitVariableDeclaration: (variablePath) => {
-              const definitions: any[] = [];
-              if (variablePath.node.declarations) {
-                variablePath
-                  .get('declarations')
-                  .each((declarator: any) => definitions.push(declarator.get('init')));
-              }
-
-              definitions.forEach((definition) => {
-                // definition.value.expression is defined when the source is in TypeScript.
-                const expression = definition.value?.expression
-                  ? definition.get('expression')
-                  : definition;
-                if (expression.value?.callee) {
-                  const definitionName = expression.value.callee.name;
-
-                  if (definitionName === `create${componentInfo.name}`) {
-                    node = expression;
-                  }
+        {
+          resolver: (file) => {
+            let node;
+            file.traverse({
+              VariableDeclaration: (variablePath) => {
+                const definitions: any[] = [];
+                if (variablePath.node.declarations) {
+                  variablePath
+                    .get('declarations')
+                    .forEach((declarator: any) => definitions.push(declarator.get('init')));
                 }
-              });
 
-              return false;
-            },
-          });
+                definitions.forEach((definition) => {
+                  // definition.value.expression is defined when the source is in TypeScript.
+                  const expression = definition.value?.expression
+                    ? definition.get('expression')
+                    : definition;
+                  if (expression.value?.callee) {
+                    const definitionName = expression.value.callee.name;
 
-          return node;
-        },
-        defaultHandlers,
-        { filename },
-      );
+                    if (definitionName === `create${componentInfo.name}`) {
+                      node = expression;
+                    }
+                  }
+                });
+
+                variablePath.skip();
+              },
+            });
+
+            return [node!];
+          },
+          handlers: defaultHandlers,
+          filename,
+        }
+      )[0];
     } catch (error) {
       // fallback to default logic if there is no `create*` definition.
       if ((error as Error).message === 'No suitable component definition found.') {
-        reactApi = docgenParse(src, null, defaultHandlers.concat(muiDefaultPropsHandler), {
-          filename,
-        });
+        reactApi = docgenParse(src, { handlers: defaultHandlers.concat(muiDefaultPropsHandler), filename })[0];
       } else {
         throw error;
       }
     }
   } else {
-    reactApi = docgenParse(src, null, defaultHandlers.concat(muiDefaultPropsHandler), {
-      filename,
-    });
+    reactApi = docgenParse(src, { handlers: defaultHandlers.concat(muiDefaultPropsHandler), filename })[0];
   }
 
   if (!reactApi.props) {

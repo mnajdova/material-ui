@@ -5,6 +5,7 @@ import capitalize from '../utils/capitalize';
 import styled from '../styles/styled';
 import useThemeProps from '../styles/useThemeProps';
 
+// @ignore - internal component.
 const Container = createContainer({
   createStyledComponent: styled('div', {
     name: 'MuiContainer',

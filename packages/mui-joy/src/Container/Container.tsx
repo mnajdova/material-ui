@@ -7,6 +7,7 @@ import styled from '../styles/styled';
 import { useThemeProps } from '../styles';
 import { ContainerTypeMap } from './ContainerProps';
 
+// @ignore - internal component.
 const Container = createContainer<Theme>({
   createStyledComponent: styled('div', {
     name: 'JoyContainer',

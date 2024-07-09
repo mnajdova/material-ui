@@ -397,6 +397,7 @@ const useUtilityClasses = (ownerState) => {
   return composeClasses(slots, getGridUtilityClass, classes);
 };
 
+// @ignore - internal component.
 const Grid = React.forwardRef(function Grid(inProps, ref) {
   const themeProps = useThemeProps({ props: inProps, name: 'MuiGrid' });
   const { breakpoints } = useTheme();

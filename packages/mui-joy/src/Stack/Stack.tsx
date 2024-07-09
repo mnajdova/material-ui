@@ -7,7 +7,7 @@ import { useThemeProps } from '../styles';
 import { StackTypeMap } from './StackProps';
 
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Stack](https://mui.com/joy-ui/react-stack/)

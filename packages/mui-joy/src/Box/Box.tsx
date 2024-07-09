@@ -7,7 +7,7 @@ import defaultTheme from '../styles/defaultTheme';
 import THEME_ID from '../styles/identifier';
 import boxClasses from './boxClasses';
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Box](https://mui.com/joy-ui/react-box/)

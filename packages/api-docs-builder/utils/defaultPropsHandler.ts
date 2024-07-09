@@ -1,54 +1,49 @@
 import { namedTypes as types } from 'ast-types';
 import { parse as parseDoctrine, Annotation } from 'doctrine';
-import { utils as docgenUtils, NodePath, Documentation, Importer, Handler } from 'react-docgen';
+import { utils as docgenUtils, NodePath, Documentation, builtinResolvers, Importer, Handler } from 'react-docgen';
 
 const { getPropertyName, isReactForwardRefCall, printValue, resolveToValue } = docgenUtils;
 
 // based on https://github.com/reactjs/react-docgen/blob/735f39ef784312f4c0e740d4bfb812f0a7acd3d5/src/handlers/defaultPropsHandler.js#L1-L112
 // adjusted for material-ui getThemedProps
-
-function getDefaultValue(propertyPath: NodePath, importer: Importer) {
-  if (!types.AssignmentPattern.check(propertyPath.get('value').node)) {
+function getDefaultValue(propertyPath: NodePath) {
+  console.log(propertyPath.get('value').isAssignmentPattern());
+  if (!propertyPath.get('value').isAssignmentPattern()) {
     return null;
   }
-
+  console.log("HERE");
   let path: NodePath = propertyPath.get('value', 'right');
   let node = path.node;
 
   let defaultValue: string | undefined;
-  if (types.Literal.check(path.node)) {
-    // @ts-expect-error TODO upstream fix
-    defaultValue = node.raw;
+  let resolvedPath = path;
+  let valuePath = path;
+  if (path.isBooleanLiteral()) {
+    defaultValue = `${path.node.value}`;
+  } else if (path.isNullLiteral()) {
+    defaultValue = 'null';
+  } else if (path.isLiteral()) {
+    defaultValue = path.node.extra?.raw as string;
   } else {
-    if (types.AssignmentPattern.check(path.node)) {
-      path = resolveToValue(path.get('right'), importer);
+    if (path.isAssignmentPattern()) {
+      resolvedPath = resolveToValue(path.get('right'));
     } else {
-      path = resolveToValue(path, importer);
+      resolvedPath = resolveToValue(path);
     }
-    if (types.ImportDeclaration.check(path.node)) {
-      if (types.TSAsExpression.check(node)) {
-        node = node.expression;
-      }
-      if (!types.Identifier.check(node)) {
-        const locationHint =
-          node.loc != null ? `${node.loc.start.line}:${node.loc.start.column}` : 'unknown location';
-        throw new TypeError(
-          `Unable to follow data flow. Expected an 'Identifier' resolve to an 'ImportDeclaration'. Instead attempted to resolve a '${node.type}' at ${locationHint}.`,
-        );
-      }
-      defaultValue = node.name;
+    if (resolvedPath.parentPath?.isImportDeclaration() && path.isIdentifier()) {
+      defaultValue = path.node.name;
     } else {
-      node = path.node;
-      defaultValue = printValue(path);
+      valuePath = resolvedPath;
+      defaultValue = printValue(resolvedPath);
     }
   }
-  if (defaultValue !== undefined) {
+  if (typeof defaultValue !== 'undefined') {
     return {
       value: defaultValue,
       computed:
-        types.CallExpression.check(node) ||
-        types.MemberExpression.check(node) ||
-        types.Identifier.check(node),
+        valuePath.isCallExpression() ||
+        valuePath.isMemberExpression() ||
+        valuePath.isIdentifier(),
     };
   }
 
@@ -64,11 +59,10 @@ function getJsdocDefaultValue(jsdoc: Annotation): { value: string } | undefined 
 }
 
 function getDefaultValuesFromProps(
-  properties: NodePath,
+  properties: NodePath[],
   documentation: Documentation,
-  importer: Importer,
 ) {
-  const { props: documentedProps } = documentation.toObject();
+  const { props: documentedProps } = documentation;
   const implementedProps: Record<string, NodePath> = {};
   properties
     .filter((propertyPath: NodePath) => types.Property.check(propertyPath.node), undefined)
@@ -95,13 +89,14 @@ function getDefaultValuesFromProps(
         sloppy: true,
       }),
     );
+
     if (jsdocDefaultValue) {
       propDescriptor.jsdocDefaultValue = jsdocDefaultValue;
     }
 
     const propertyPath = implementedProps[propName];
     if (propertyPath !== undefined) {
-      const defaultValue = getDefaultValue(propertyPath, importer);
+      const defaultValue = getDefaultValue(propertyPath);
       if (defaultValue) {
         propDescriptor.defaultValue = defaultValue;
       }
@@ -109,12 +104,16 @@ function getDefaultValuesFromProps(
   });
 }
 
-function getRenderBody(componentDefinition: NodePath, importer: Importer): NodePath {
-  const value = resolveToValue(componentDefinition, importer);
-  if (isReactForwardRefCall(value, importer)) {
-    return value.get('arguments', 0, 'body', 'body');
+function toNodePathArray(node: NodePath | NodePath[]): NodePath[] {
+  return Array.isArray(node) ? node : [node];
+}
+
+function getRenderBody(componentDefinition: builtinResolvers.ComponentNodePath): NodePath[] {
+  const value = resolveToValue(componentDefinition);
+  if (isReactForwardRefCall(value)) {
+    return toNodePathArray(value.get('arguments')[0].get('body.body'));
   }
-  return value.get('body', 'body');
+  return toNodePathArray(value.get('body.body'));
 }
 
 /**
@@ -126,10 +125,9 @@ function getRenderBody(componentDefinition: NodePath, importer: Importer): NodeP
  * })
  */
 function getExplicitPropsDeclaration(
-  componentDefinition: NodePath,
-  importer: Importer,
+  componentDefinition: builtinResolvers.ComponentNodePath,
 ): NodePath | undefined {
-  const functionNode = getRenderBody(componentDefinition, importer);
+  const functionNode = getRenderBody(componentDefinition);
 
   let propsPath: NodePath | undefined;
   // visitVariableDeclarator, can't use visit body.node since it looses scope information
@@ -138,19 +136,19 @@ function getExplicitPropsDeclaration(
       return types.VariableDeclaration.check(path.node);
     }, undefined)
     .forEach((path: NodePath) => {
-      const declaratorPath = path.get('declarations', 0);
+      const declaratorPath = path.get('declarations')[0];
       // find `const {} = props`
       // but not `const ownerState = props`
       if (
-        declaratorPath.get('init', 'name').value === 'props' &&
-        declaratorPath.get('id', 'type').value === 'ObjectPattern'
+        declaratorPath.get('init')?.node?.name === 'props' &&
+        declaratorPath.get('id')?.node?.type === 'ObjectPattern'
       ) {
         propsPath = declaratorPath.get('id');
       }
     });
 
   if (!propsPath) {
-    console.error(`${functionNode.parent.value.id.name}: could not find props declaration to generate jsdoc table. The component declaration should be in this format:
+    console.error(`${functionNode[0].parentPath?.get('id').node?.name}: could not find props declaration to generate jsdoc table. The component declaration should be in this format:
 
   function Component(props: ComponentProps) {
     const { ...spreadAsUsual } = props;
@@ -162,10 +160,10 @@ function getExplicitPropsDeclaration(
   return propsPath;
 }
 
-const defaultPropsHandler: Handler = (documentation, componentDefinition, importer) => {
-  const props = getExplicitPropsDeclaration(componentDefinition, importer);
-
-  getDefaultValuesFromProps(props?.get('properties') ?? [], documentation, importer);
+// TODO: Figure out why documentation is an empty object
+const defaultPropsHandler: Handler = (documentation: Documentation, componentDefinition: builtinResolvers.ComponentNodePath) => {
+  const props = getExplicitPropsDeclaration(componentDefinition);
+  getDefaultValuesFromProps(props?.get('properties') ?? [], documentation);
 };
 
 export default defaultPropsHandler;

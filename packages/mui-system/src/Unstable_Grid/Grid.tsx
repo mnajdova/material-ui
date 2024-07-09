@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import createGrid from './createGrid';
 /**
- *
+ * @ignore - internal component.
  * Demos:
  *
  * - [Grid (Joy UI)](https://mui.com/joy-ui/react-grid/)
