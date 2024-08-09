@@ -1,8 +1,14 @@
 {
   "github": {
-    "autoJobCancelation": false,
-    "silent": true
+    "silent": true,
+    "autoJobCancelation": false
   },
   "public": true,
-  "trailingSlash": true
+  "trailingSlash": true,
+  "rewrites": [
+    {
+      "source": "/store/:path*/",
+      "destination": "https://material-ui-store.netlify.app/:path*/"
+    }
+  ]
 }
