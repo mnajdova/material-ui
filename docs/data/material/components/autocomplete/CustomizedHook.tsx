@@ -8,12 +8,11 @@ import { styled } from '@mui/material/styles';
 import { autocompleteClasses } from '@mui/material/Autocomplete';
 
 const Root = styled('div')(
-  ({ theme }) => `
-  color: ${
-    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,.85)'
-  };
+  `
+  color: rgba(0,0,0,.85);
   font-size: 14px;
 `,
+  ({ theme }) => theme.applyStyles('dark', { color: 'rgba(255,255,255,0.65)' }),
 );
 
 const Label = styled('label')`
@@ -23,29 +22,27 @@ const Label = styled('label')`
 `;
 
 const InputWrapper = styled('div')(
-  ({ theme }) => `
+  `
   width: 300px;
-  border: 1px solid ${theme.palette.mode === 'dark' ? '#434343' : '#d9d9d9'};
-  background-color: ${theme.palette.mode === 'dark' ? '#141414' : '#fff'};
+  border: 1px solid #d9d9d9;
+  background-color: #fff;
   border-radius: 4px;
   padding: 1px;
   display: flex;
   flex-wrap: wrap;
 
   &:hover {
-    border-color: ${theme.palette.mode === 'dark' ? '#177ddc' : '#40a9ff'};
+    border-color: #40a9ff;
   }
 
   &.focused {
-    border-color: ${theme.palette.mode === 'dark' ? '#177ddc' : '#40a9ff'};
+    border-color: #40a9ff;
     box-shadow: 0 0 0 2px rgb(24 144 255 / 0.2);
   }
 
   & input {
-    background-color: ${theme.palette.mode === 'dark' ? '#141414' : '#fff'};
-    color: ${
-      theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,.85)'
-    };
+    background-color: #fff;
+    color: rgba(0,0,0,.85);
     height: 30px;
     box-sizing: border-box;
     padding: 4px 6px;
@@ -57,6 +54,21 @@ const InputWrapper = styled('div')(
     outline: 0;
   }
 `,
+  ({ theme }) =>
+    theme.applyStyles('dark', {
+      border: '1px solid #434343',
+      backgroundColor: '#141414',
+      '&:hover': {
+        borderColor: '#177ddc',
+      },
+      '&.focused': {
+        borderColor: '#177ddc',
+      },
+      '& input': {
+        backgroundColor: '#141414',
+        color: 'rgba(255,255,255,0.65)',
+      },
+    }),
 );
 
 interface TagProps extends ReturnType<AutocompleteGetTagProps> {
@@ -80,10 +92,8 @@ const StyledTag = styled(Tag)<TagProps>(
   height: 24px;
   margin: 2px;
   line-height: 22px;
-  background-color: ${
-    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : '#fafafa'
-  };
-  border: 1px solid ${theme.palette.mode === 'dark' ? '#303030' : '#e8e8e8'};
+  background-color: #fafafa;
+  border: 1px solid #e8e8e8;
   border-radius: 2px;
   box-sizing: content-box;
   padding: 0 4px 0 10px;
@@ -91,8 +101,8 @@ const StyledTag = styled(Tag)<TagProps>(
   overflow: hidden;
 
   &:focus {
-    border-color: ${theme.palette.mode === 'dark' ? '#177ddc' : '#40a9ff'};
-    background-color: ${theme.palette.mode === 'dark' ? '#003b57' : '#e6f7ff'};
+    border-color: #40a9ff;
+    background-color: #e6f7ff;
   }
 
   & span {
@@ -107,6 +117,15 @@ const StyledTag = styled(Tag)<TagProps>(
     padding: 4px;
   }
 `,
+  ({ theme }) =>
+    theme.applyStyles('dark', {
+      backgroundColor: 'rgba(255,255,255,0.08)',
+      border: '1px solid #303030',
+      '&:focus': {
+        borderColor: '#177ddc',
+        backgroundColor: '#003b57',
+      },
+    }),
 );
 
 const Listbox = styled('ul')(
@@ -116,7 +135,7 @@ const Listbox = styled('ul')(
   padding: 0;
   position: absolute;
   list-style: none;
-  background-color: ${theme.palette.mode === 'dark' ? '#141414' : '#fff'};
+  background-color: #fff;
   overflow: auto;
   max-height: 250px;
   border-radius: 4px;
@@ -137,7 +156,7 @@ const Listbox = styled('ul')(
   }
 
   & li[aria-selected='true'] {
-    background-color: ${theme.palette.mode === 'dark' ? '#2b2b2b' : '#fafafa'};
+    background-color: #fafafa;
     font-weight: 600;
 
     & svg {
@@ -146,7 +165,7 @@ const Listbox = styled('ul')(
   }
 
   & li.${autocompleteClasses.focused} {
-    background-color: ${theme.palette.mode === 'dark' ? '#003b57' : '#e6f7ff'};
+    background-color: #e6f7ff;
     cursor: pointer;
 
     & svg {
@@ -154,6 +173,16 @@ const Listbox = styled('ul')(
     }
   }
 `,
+  ({ theme }) =>
+    theme.applyStyles('dark', {
+      backgroundColor: '#141414',
+      '& li[aria-selected="true"]': {
+        backgroundColor: '#2b2b2b',
+      },
+      [`& li.${autocompleteClasses.focused}`]: {
+        backgroundColor: '#003b57',
+      },
+    }),
 );
 
 export default function CustomizedHook() {
