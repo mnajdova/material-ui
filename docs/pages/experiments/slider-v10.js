@@ -143,7 +143,8 @@ export default function SliderV10Experiment({ themeCss, sliderCss, plainCssExamp
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>SliderV10</h1>
           <p style={{ fontSize: '0.875rem', opacity: 0.8 }}>
             Zero-runtime Slider prototype: static layered CSS, data attributes, CSS variable
-            knobs. Compare against{' '}
+            knobs — behavior and accessibility from Base UI, exposed as both a precomposed
+            component and composable parts. Compare against{' '}
             <Link href="/material-ui/react-slider/" style={{ color: 'inherit' }}>
               the v9 Slider demos
             </Link>
@@ -255,6 +256,46 @@ export default function SliderV10Experiment({ themeCss, sliderCss, plainCssExamp
                 aria-label="Volume"
               />
             </div>
+          </Demo>
+        </Section>
+
+        <Section
+          title="Composition API"
+          description="The same Material-styled parts the high-level <Slider /> is built from (Base UI under the hood). Same stylesheet, same selector contract — structure is now user markup."
+        >
+          <Demo label="Custom composition — formatted value label, always visible">
+            <Slider.Root defaultValue={30} aria-label="Percentage">
+              <Slider.Rail />
+              <Slider.Track />
+              <Slider.Thumb>
+                <Slider.ValueLabel open>{(value) => `${value}%`}</Slider.ValueLabel>
+              </Slider.Thumb>
+            </Slider.Root>
+          </Demo>
+          <Demo label="Structural freedom — range without a rail, custom content inside the first thumb">
+            <Slider.Root defaultValue={[20, 60]} color="secondary" aria-label="Range">
+              <Slider.Track />
+              <Slider.Thumb index={0} getAriaLabel={(index) => `Start ${index}`}>
+                <span aria-hidden style={{ fontSize: 10, color: 'white', pointerEvents: 'none' }}>
+                  ‖
+                </span>
+              </Slider.Thumb>
+              <Slider.Thumb index={1} getAriaLabel={(index) => `End ${index}`} />
+            </Slider.Root>
+          </Demo>
+          <Demo label="Marks as a data-driven part, one-off styled via Tailwind-style utilities">
+            <Slider.Root
+              defaultValue={40}
+              marks
+              step={10}
+              className="[--Slider-color:#10b981]"
+              aria-label="Steps"
+            >
+              <Slider.Rail />
+              <Slider.Track />
+              <Slider.Marks />
+              <Slider.Thumb />
+            </Slider.Root>
           </Demo>
         </Section>
 

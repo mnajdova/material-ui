@@ -13,8 +13,9 @@ deleted wholesale.
 
 | File | What it is |
 | :--- | :--- |
-| `Slider.js` | The converted component. Behavior is 100% reused from `../Slider/useSlider` — the migration touches styling only. |
-| `slider.css` | The entire style implementation, static, inside `@layer mui.components`. Replaces all seven `styled()` slots. |
+| `parts.js` | Composition parts (`Slider.Root/Rail/Track/Marks/Thumb/ValueLabel`) — Material-styled Base UI parts (`@base-ui/react`). Behavior and a11y come from Base UI; no v9 code is used. |
+| `Slider.js` | The precomposed high-level component — a ~70-line composition of the parts (the "publish the composition" model from the composition RFC). |
+| `slider.css` | The entire style implementation, static, inside `@layer mui.components`. Replaces all seven `styled()` slots. **Unchanged by the composition refactor.** |
 | `theme.css` | Minimal token layer (`@layer mui.tokens`) so the prototype is self-contained. In v10 this is `createTheme` output. |
 | `examples/tailwind-example.js` | Overriding with Tailwind CSS v4 |
 | `examples/plain-css-example.{js,css}` | Overriding with plain CSS (incl. the `styleOverrides` replacement) |
@@ -124,9 +125,9 @@ layer declared after `mui.components` — the same mechanism as the real
   palette color (`[data-color='brand'] { --Slider-color: var(--mui-palette-brand) }`),
   or users skip `color` and set `--Slider-color` directly. **This confirms the
   theme CLI needs a "component color variants" emission step.**
-- **`slots`/`slotProps` are omitted here** to keep the pilot focused on styling.
-  The final component keeps them (composition, not styling) — porting `useSlot`
-  without `ownerState` is its own small task.
+- **`slots`/`slotProps` are replaced by the composition API** (see the
+  *v10 Component API — Composition* RFC): `useSlot` was never ported, and the
+  component is now rebuilt on Base UI's Slider parts — findings below.
 - **`useDefaultProps` dropped** per the RFC (wrapper components); this is the
   first component to actually feel that removal.
 - **Breaking for `slotProps.valueLabel` users**: the value-label DOM change is a
@@ -134,6 +135,52 @@ layer declared after `mui.components` — the same mechanism as the real
 - **`transform-origin` has no logical equivalent** — the vertical value label
   keeps physical `right` positioning like v9. Fine, but worth knowing the
   platform edge exists.
+
+## Composition refactor findings (Base UI under the hood)
+
+The pilot was rebuilt on `@base-ui/react` per the composition RFC: parts in
+`parts.js`, the high-level component reduced to a thin composition. Validation
+targets from the RFC, checked:
+
+- ✅ **`slider.css` needed zero changes.** All pre-existing contract tests
+  passed unchanged against the new implementation — the styling contract is
+  API-agnostic, as claimed.
+- ✅ **The high-level `<Slider />` is a ~70-line composition** of the public
+  parts (thumb-count derivation + v9 callback-signature adapters account for
+  most of it).
+- ✅ **All v9 code is gone from the prototype**: `useSlider`, `useRtl`, and the
+  local `valueToPercent` dependency on the v9 folder are deleted. Behavior,
+  a11y, keyboard, pointer math, and RTL come from Base UI.
+- ✅ **Data-attribute names aligned for free**: Base UI emits `data-dragging`,
+  `data-orientation`, `data-disabled` — the exact names `slider.css` already
+  targets. Material adds `data-color`/`data-size`/`data-track`/`data-marked`
+  (root), `data-active`/`data-focus-visible` (thumb), `data-open` (value label).
+
+Design choices worth knowing:
+
+- **DOM**: `Slider.Root` renders Base UI's `Root` as a layout-neutral wrapper
+  (`display: contents`) around `Control`, which carries `.MuiSlider-root` and
+  the whole selector contract. Rail, Track, and Marks are Material-only plain
+  spans — this keeps `track="inverted"` working (Base UI's `Indicator` has no
+  inverted concept) and keeps the `--Slider-track-*` positioning vars live.
+- **Thumb positioning is owned by Base UI** via inline styles
+  (`insetInlineStart` + `translate`), which shadow the stylesheet's positioning
+  rules. Visually equivalent; `--Slider-thumb-offset` is still set inline so the
+  contract var remains readable. A follow-up could delete the shadowed CSS.
+
+Gaps to feed back to Base UI / the RFC:
+
+- **No public root-state access**: Material-only parts (Marks, Track, ValueLabel)
+  need `values`/`min`/`max`, so `Slider.Root` mirrors the value state.
+  `useSliderRootContext` exists internally but isn't exported — exposing it
+  would remove the duplication.
+- **Per-thumb active state isn't exposed**, so the value label auto-opens on
+  hover/focus/press on the thumb but not when a drag starts from the track.
+- **No v10 equivalent yet** for v9's `scale` (nonlinear display) and
+  `step={null}` (marks-only stepping); Base UI offers `format`/`locale` instead.
+- **Callback signatures**: Base UI uses `(value, eventDetails)`; the high-level
+  component adapts to v9's `(event, value, activeThumb)`. Decide which signature
+  v10 standardizes on.
 
 ### Where the effort went
 

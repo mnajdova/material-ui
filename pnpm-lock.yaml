@@ -1154,6 +1154,9 @@ importers:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     devDependencies:
+      '@base-ui/react':
+        specifier: catalog:docs
+        version: 1.6.0(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@types/chai':
         specifier: 5.2.3
         version: 5.2.3
