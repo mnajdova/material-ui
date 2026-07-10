@@ -1,0 +1,34 @@
+/* v10 prototype — minimal token layer so the Slider pilot is self-contained.
+ * In the real architecture this file is `createTheme` output (build-time CLI
+ * or <ThemeStyles>), and the layer order declaration ships in base.css.
+ */
+@layer mui.tokens, mui.base, mui.components;
+
+@layer mui.tokens {
+  :root {
+    color-scheme: light dark;
+
+    --mui-palette-primary: #1976d2;
+    --mui-palette-secondary: #9c27b0;
+    --mui-palette-error: #d32f2f;
+    --mui-palette-info: #0288d1;
+    --mui-palette-success: #2e7d32;
+    --mui-palette-warning: #ed6c02;
+    --mui-palette-grey-400: #bdbdbd;
+    --mui-palette-grey-600: #757575;
+    --mui-palette-common-white: #fff;
+    --mui-palette-background-paper: light-dark(#fff, #121212);
+    --mui-palette-text-primary: light-dark(rgb(0 0 0 / 0.87), #fff);
+    --mui-palette-text-secondary: light-dark(rgb(0 0 0 / 0.6), rgb(255 255 255 / 0.7));
+
+    --mui-font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+
+    --mui-shadow-2:
+      0px 3px 1px -2px rgb(0 0 0 / 0.2),
+      0px 2px 2px 0px rgb(0 0 0 / 0.14),
+      0px 1px 5px 0px rgb(0 0 0 / 0.12);
+
+    --mui-duration-shortest: 150ms;
+    --mui-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

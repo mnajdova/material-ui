@@ -1,0 +1,408 @@
+/* SliderV10 — the entire style implementation, static.
+ *
+ * Everything lives in @layer mui.components, so any unlayered user CSS beats
+ * these rules regardless of specificity. Internally, selectors stay at
+ * specificity (0,1,0): one slot class, all qualifiers wrapped in :where().
+ *
+ * Contract (see PLAN.md):
+ *   ring 2 knobs   --Slider-color, --Slider-size, --Slider-thumbSize
+ *   ring 3 derived --Slider-haloColor, --Slider-invertedTrackColor
+ *   positioning    --Slider-track-offset/-leap, --Slider-thumb-offset,
+ *                  --Slider-mark-offset (set inline by the component)
+ */
+
+@layer mui.components {
+  /* ── Root ─────────────────────────────────────────────────────────── */
+
+  .MuiSlider-root {
+    --Slider-color: var(--mui-palette-primary);
+    --Slider-size: 4px;
+    --Slider-thumbSize: 20px;
+
+    --Slider-haloColor: color-mix(in srgb, var(--Slider-color) 16%, transparent);
+    --Slider-invertedTrackColor: light-dark(
+      color-mix(in srgb, var(--Slider-color) 38%, white),
+      color-mix(in srgb, var(--Slider-color) 50%, black)
+    );
+
+    display: inline-block;
+    position: relative;
+    box-sizing: content-box;
+    border-radius: 12px;
+    color: var(--Slider-color);
+    cursor: pointer;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media print {
+    .MuiSlider-root {
+      print-color-adjust: exact;
+    }
+  }
+
+  /* Generated from theme.palette by the theme build step; custom palette
+     colors get one extra rule each. */
+  .MuiSlider-root:where([data-color='secondary']) { --Slider-color: var(--mui-palette-secondary); }
+  .MuiSlider-root:where([data-color='error'])     { --Slider-color: var(--mui-palette-error); }
+  .MuiSlider-root:where([data-color='info'])      { --Slider-color: var(--mui-palette-info); }
+  .MuiSlider-root:where([data-color='success'])   { --Slider-color: var(--mui-palette-success); }
+  .MuiSlider-root:where([data-color='warning'])   { --Slider-color: var(--mui-palette-warning); }
+
+  /* v9 needed 4 size×orientation variants for this; the knob collapses them. */
+  .MuiSlider-root:where([data-size='small']) {
+    --Slider-size: 2px;
+    --Slider-thumbSize: 12px;
+  }
+
+  /* Reassign the knob; rail, track, thumb, and halo all follow. */
+  .MuiSlider-root:where([data-disabled]) {
+    --Slider-color: var(--mui-palette-grey-400);
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .MuiSlider-root:where([data-orientation='horizontal']) {
+    width: 100%;
+    height: var(--Slider-size);
+    padding-block: 13px;
+  }
+
+  .MuiSlider-root:where([data-orientation='vertical']) {
+    height: 100%;
+    width: var(--Slider-size);
+    padding-inline: 13px;
+  }
+
+  /* The primary input mechanism includes a pointing device of limited
+     accuracy: reach a 42px touch target, about ~8mm on screen. */
+  @media (pointer: coarse) {
+    .MuiSlider-root:where([data-orientation='horizontal']) {
+      padding-block: 20px;
+    }
+
+    .MuiSlider-root:where([data-orientation='vertical']) {
+      padding-inline: 20px;
+    }
+  }
+
+  .MuiSlider-root:where([data-orientation='horizontal'][data-marked]) {
+    margin-bottom: 20px;
+  }
+
+  .MuiSlider-root:where([data-orientation='vertical'][data-marked]) {
+    margin-inline-end: 44px;
+  }
+
+  :where(.MuiSlider-root[data-dragging]) :is(.MuiSlider-thumb, .MuiSlider-track) {
+    transition: none;
+  }
+
+  /* ── Rail ─────────────────────────────────────────────────────────── */
+
+  .MuiSlider-rail {
+    display: block;
+    position: absolute;
+    border-radius: inherit;
+    background-color: currentColor;
+    opacity: 0.38;
+  }
+
+  @media (forced-colors: active) {
+    .MuiSlider-rail {
+      border: 1px solid transparent;
+      box-sizing: border-box;
+    }
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-rail {
+    width: 100%;
+    height: var(--Slider-size);
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical']) > .MuiSlider-rail {
+    height: 100%;
+    width: var(--Slider-size);
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  :where(.MuiSlider-root[data-track='inverted']) > .MuiSlider-rail {
+    opacity: 1;
+  }
+
+  /* ── Track ────────────────────────────────────────────────────────── */
+
+  .MuiSlider-track {
+    display: block;
+    position: absolute;
+    border-radius: inherit;
+    border: 1px solid currentColor;
+    background-color: currentColor;
+    transition:
+      inset-inline-start var(--mui-duration-shortest) var(--mui-easing-standard),
+      width var(--mui-duration-shortest) var(--mui-easing-standard),
+      bottom var(--mui-duration-shortest) var(--mui-easing-standard),
+      height var(--mui-duration-shortest) var(--mui-easing-standard);
+  }
+
+  @media (forced-colors: none) {
+    :where(.MuiSlider-root[data-size='small']) > .MuiSlider-track {
+      border: none;
+    }
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-track {
+    height: var(--Slider-size);
+    top: 50%;
+    translate: 0 -50%;
+    inset-inline-start: var(--Slider-track-offset);
+    width: var(--Slider-track-leap);
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical']) > .MuiSlider-track {
+    width: var(--Slider-size);
+    left: 50%;
+    translate: -50% 0;
+    bottom: var(--Slider-track-offset);
+    height: var(--Slider-track-leap);
+  }
+
+  :where(.MuiSlider-root[data-track='false']) > .MuiSlider-track {
+    display: none;
+  }
+
+  /* light-dark() + color-mix() replace theme.lighten/darken and the
+     generated palette.Slider.*Track tokens from v9. */
+  :where(.MuiSlider-root[data-track='inverted']) > .MuiSlider-track {
+    background-color: var(--Slider-invertedTrackColor);
+    border-color: var(--Slider-invertedTrackColor);
+  }
+
+  /* ── Thumb ────────────────────────────────────────────────────────── */
+
+  .MuiSlider-thumb {
+    position: absolute;
+    width: var(--Slider-thumbSize);
+    height: var(--Slider-thumbSize);
+    box-sizing: border-box;
+    border-radius: 50%;
+    outline: 0;
+    background-color: currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      box-shadow var(--mui-duration-shortest) var(--mui-easing-standard),
+      inset-inline-start var(--mui-duration-shortest) var(--mui-easing-standard),
+      bottom var(--mui-duration-shortest) var(--mui-easing-standard);
+  }
+
+  @media (forced-colors: active) {
+    .MuiSlider-thumb {
+      border: 1px solid ButtonBorder;
+    }
+  }
+
+  .MuiSlider-thumb::before {
+    position: absolute;
+    content: '';
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    box-shadow: var(--mui-shadow-2);
+  }
+
+  .MuiSlider-thumb::after {
+    position: absolute;
+    content: '';
+    border-radius: 50%;
+    /* 42px is the hit target */
+    width: 42px;
+    height: 42px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  :where(.MuiSlider-root[data-size='small']) .MuiSlider-thumb::before {
+    box-shadow: none;
+  }
+
+  /* The calc() centers the thumb on the value point from either writing
+     direction — this replaces v9's `horizontal-reverse` axis and the JS
+     left/right switching. */
+  :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-thumb {
+    top: 50%;
+    translate: 0 -50%;
+    inset-inline-start: calc(var(--Slider-thumb-offset) - var(--Slider-thumbSize) / 2);
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical']) > .MuiSlider-thumb {
+    left: 50%;
+    translate: -50% 0;
+    bottom: calc(var(--Slider-thumb-offset) - var(--Slider-thumbSize) / 2);
+  }
+
+  /* States derive from --Slider-color via --Slider-haloColor. */
+  .MuiSlider-thumb:hover,
+  .MuiSlider-thumb:where([data-focus-visible]) {
+    box-shadow: 0 0 0 8px var(--Slider-haloColor);
+  }
+
+  @media (hover: none) {
+    .MuiSlider-thumb:hover {
+      box-shadow: none;
+    }
+  }
+
+  .MuiSlider-thumb:where([data-active]) {
+    box-shadow: 0 0 0 14px var(--Slider-haloColor);
+  }
+
+  /* ── Value label (inside the thumb) ───────────────────────────────── */
+
+  .MuiSlider-valueLabel {
+    position: absolute;
+    z-index: 1;
+    white-space: nowrap;
+    font-family: var(--mui-font-family);
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    font-weight: 500;
+    background-color: var(--mui-palette-grey-600);
+    border-radius: 2px;
+    color: var(--mui-palette-common-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    transition: transform var(--mui-duration-shortest) var(--mui-easing-standard);
+  }
+
+  .MuiSlider-valueLabel::before {
+    position: absolute;
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: inherit;
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) .MuiSlider-valueLabel {
+    top: -10px;
+    transform-origin: bottom center;
+    transform: translateY(-100%) scale(0);
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) .MuiSlider-valueLabel::before {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%) rotate(45deg);
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) .MuiSlider-valueLabel:where([data-open]) {
+    transform: translateY(-100%) scale(1);
+  }
+
+  /* transform-origin has no logical equivalent, so the vertical label keeps
+     physical `right` positioning (v9 does the same). */
+  :where(.MuiSlider-root[data-orientation='vertical']) .MuiSlider-valueLabel {
+    right: 30px;
+    top: 50%;
+    transform-origin: right center;
+    transform: translateY(-50%) scale(0);
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical']) .MuiSlider-valueLabel::before {
+    right: -8px;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical']) .MuiSlider-valueLabel:where([data-open]) {
+    transform: translateY(-50%) scale(1);
+  }
+
+  :where(.MuiSlider-root[data-size='small']) .MuiSlider-valueLabel {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical'][data-size='small']) .MuiSlider-valueLabel {
+    right: 20px;
+  }
+
+  /* ── Marks ────────────────────────────────────────────────────────── */
+
+  .MuiSlider-mark {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 1px;
+    background-color: currentColor;
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-mark {
+    top: 50%;
+    translate: -1px -50%;
+    inset-inline-start: var(--Slider-mark-offset);
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-mark:dir(rtl) {
+    translate: 1px -50%;
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical']) > .MuiSlider-mark {
+    left: 50%;
+    translate: -50% 1px;
+    bottom: var(--Slider-mark-offset);
+  }
+
+  .MuiSlider-mark:where([data-active]) {
+    background-color: var(--mui-palette-background-paper);
+    opacity: 0.8;
+  }
+
+  .MuiSlider-markLabel {
+    font-family: var(--mui-font-family);
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    color: var(--mui-palette-text-secondary);
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-markLabel {
+    top: 30px;
+    translate: -50% 0;
+    inset-inline-start: var(--Slider-mark-offset);
+  }
+
+  :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-markLabel:dir(rtl) {
+    translate: 50% 0;
+  }
+
+  :where(.MuiSlider-root[data-orientation='vertical']) > .MuiSlider-markLabel {
+    inset-inline-start: 36px;
+    translate: 0 50%;
+    bottom: var(--Slider-mark-offset);
+  }
+
+  @media (pointer: coarse) {
+    :where(.MuiSlider-root[data-orientation='horizontal']) > .MuiSlider-markLabel {
+      top: 40px;
+    }
+
+    :where(.MuiSlider-root[data-orientation='vertical']) > .MuiSlider-markLabel {
+      inset-inline-start: 44px;
+    }
+  }
+
+  .MuiSlider-markLabel:where([data-active]) {
+    color: var(--mui-palette-text-primary);
+  }
+}

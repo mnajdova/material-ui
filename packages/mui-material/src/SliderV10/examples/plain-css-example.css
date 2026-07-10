@@ -1,0 +1,47 @@
+/* Overriding SliderV10 with plain CSS.
+ *
+ * This file is UNLAYERED app CSS, so every rule here beats
+ * @layer mui.components regardless of specificity or import order.
+ * No `!important`, no specificity hacks — this is the whole trick.
+ */
+
+/* ── App-wide override (the v9 `theme.styleOverrides` replacement) ──── */
+
+/* Thicker rail/track for every slider in the app: set the knob once. */
+.MuiSlider-root {
+  --Slider-size: 6px;
+}
+
+/* Restyle a slot for every slider: the value label picks up the slider's
+   own color instead of grey. */
+.MuiSlider-valueLabel {
+  border-radius: 6px;
+  background-color: var(--Slider-color);
+}
+
+/* State-dependent override without knowing internal guard selectors:
+   marks on the filled track. */
+.MuiSlider-mark[data-active] {
+  background-color: white;
+  opacity: 1;
+}
+
+/* ── Reusable component (the v9 `styled()` replacement) ─────────────── */
+
+/* Value changes go through the knobs — the hover halo follows the new
+   color automatically because it is derived with color-mix(). */
+.volume-slider {
+  --Slider-color: var(--mui-palette-success);
+  --Slider-thumbSize: 24px;
+}
+
+/* Structural changes are plain declarations on the slot. */
+.volume-slider .MuiSlider-thumb {
+  border-radius: 6px;
+}
+
+/* Ring 3 escape hatch: pin the exact halo instead of the derived value
+   (for example to meet a brand spec). */
+.volume-slider {
+  --Slider-haloColor: rgb(46 125 50 / 0.24);
+}
